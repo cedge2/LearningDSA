@@ -1,0 +1,181 @@
+//
+
+#Stack - similar to an array, but has more limited functionality - you can only  push to add a new element to the top, 
+pop to remove the element from the top, or peek at the top element without popping
+it off.  
+
+It is good for addding objects to a temporary list in LIFO order - it is similar to a queue but opposite of FIFO - it is O(1) to add to the end of a stack //
+
+JAVASCRIPT example: 
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+
+    // Add an element to the top of the stack
+    push(element) {
+        this.items.push(element);
+    }
+
+    // Remove and return the top element of the stack
+    pop() {
+        if (this.isEmpty()) {
+            return "Stack is empty";
+        }
+        return this.items.pop();
+    }
+
+    // Return the top element of the stack without removing it
+    peek() {
+        if (this.isEmpty()) {
+            return "Stack is empty";
+        }
+        return this.items[this.items.length - 1];
+    }
+
+    // Check if the stack is empty
+    isEmpty() {
+        return this.items.length === 0;
+    }
+
+    // Return the size of the stack
+    size() {
+        return this.items.length;
+    }
+
+    // Clear all elements from the stack
+    clear() {
+        this.items = [];
+    }
+
+    // Print the elements of the stack
+    print() {
+        console.log(this.items.toString());
+    }
+}
+
+// Example usage
+const stack = new Stack();
+stack.push(10);
+stack.push(20);
+stack.push(30);
+console.log(stack.pop());    // Outputs: 30
+console.log(stack.peek());   // Outputs: 20
+console.log(stack.size());   // Outputs: 2
+stack.print();               // Outputs: 10,20
+stack.clear();
+console.log(stack.isEmpty()); // Outputs: true
+
+PYTHON example: 
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    # Add an element to the top of the stack
+    def push(self, item):
+        self.items.append(item)
+
+    # Remove and return the top element of the stack
+    def pop(self):
+        if self.is_empty():
+            return "Stack is empty"
+        return self.items.pop()
+
+    # Return the top element of the stack without removing it
+    def peek(self):
+        if self.is_empty():
+            return "Stack is empty"
+        return self.items[-1]
+
+    # Check if the stack is empty
+    def is_empty(self):
+        return len(self.items) == 0
+
+    # Return the size of the stack
+    def size(self):
+        return len(self.items)
+
+    # Clear all elements from the stack
+    def clear(self):
+        self.items = []
+
+    # Print the elements of the stack
+    def print_stack(self):
+        print(self.items)
+
+# Example usage
+stack = Stack()
+stack.push(10)
+stack.push(20)
+stack.push(30)
+print(stack.pop())    # Outputs: 30
+print(stack.peek())   # Outputs: 20
+print(stack.size())   # Outputs: 2
+stack.print_stack()   # Outputs: [10, 20]
+stack.clear()
+print(stack.is_empty()) # Outputs: True
+
+JAVA example: 
+import java.util.ArrayList;
+
+class Stack {
+    private ArrayList<Integer> items;
+
+    public Stack() {
+        items = new ArrayList<>();
+    }
+
+    // Add an element to the top of the stack
+    public void push(int item) {
+        items.add(item);
+    }
+
+    // Remove and return the top element of the stack
+    public int pop() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Stack is empty");
+        }
+        return items.remove(items.size() - 1);
+    }
+
+    // Return the top element of the stack without removing it
+    public int peek() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Stack is empty");
+        }
+        return items.get(items.size() - 1);
+    }
+
+    // Check if the stack is empty
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    // Return the size of the stack
+    public int size() {
+        return items.size();
+    }
+
+    // Clear all elements from the stack
+    public void clear() {
+        items.clear();
+    }
+
+    // Print the elements of the stack
+    public void printStack() {
+        System.out.println(items);
+    }
+
+    public static void main(String[] args) {
+        Stack stack = new Stack();
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+        System.out.println(stack.pop());    // Outputs: 30
+        System.out.println(stack.peek());   // Outputs: 20
+        System.out.println(stack.size());   // Outputs: 2
+        stack.printStack();                 // Outputs: [10, 20]
+        stack.clear();
+        System.out.println(stack.isEmpty()); // Outputs: true
+    }
+}
