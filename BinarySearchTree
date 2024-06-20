@@ -1,0 +1,514 @@
+// Binary Search Tree
+A binary tree is a tree in which each node has at most two children that performs insertions and deletions such that the tree is always sorted.
+
+JAVASCRIPT examples: 
+  Using a class method:
+class TreeNode {
+    constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class BinarySearchTree {
+    constructor() {
+        this.root = null;
+    }
+
+    insert(value) {
+        const newNode = new TreeNode(value);
+        if (this.root === null) {
+            this.root = newNode;
+        } else {
+            this.insertNode(this.root, newNode);
+        }
+    }
+
+    insertNode(node, newNode) {
+        if (newNode.value < node.value) {
+            if (node.left === null) {
+                node.left = newNode;
+            } else {
+                this.insertNode(node.left, newNode);
+            }
+        } else {
+            if (node.right === null) {
+                node.right = newNode;
+            } else {
+                this.insertNode(node.right, newNode);
+            }
+        }
+    }
+
+    find(value) {
+        return this.findNode(this.root, value);
+    }
+
+    findNode(node, value) {
+        if (node === null) {
+            return null;
+        } else if (value < node.value) {
+            return this.findNode(node.left, value);
+        } else if (value > node.value) {
+            return this.findNode(node.right, value);
+        } else {
+            return node;
+        }
+    }
+
+    inorderTraversal(node = this.root) {
+        if (node !== null) {
+            this.inorderTraversal(node.left);
+            console.log(node.value);
+            this.inorderTraversal(node.right);
+        }
+    }
+}
+
+const bst = new BinarySearchTree();
+bst.insert(15);
+bst.insert(25);
+bst.insert(10);
+bst.insert(7);
+bst.insert(22);
+bst.insert(17);
+bst.insert(13);
+bst.insert(5);
+bst.insert(9);
+bst.insert(27);
+
+bst.inorderTraversal();
+
+
+Using an enum-like method: 
+const TraversalType = Object.freeze({
+    INORDER: 'INORDER',
+    PREORDER: 'PREORDER',
+    POSTORDER: 'POSTORDER'
+});
+
+class TreeNode {
+    constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class BinarySearchTree {
+    constructor() {
+        this.root = null;
+    }
+
+    insert(value) {
+        const newNode = new TreeNode(value);
+        if (this.root === null) {
+            this.root = newNode;
+        } else {
+            this.insertNode(this.root, newNode);
+        }
+    }
+
+    insertNode(node, newNode) {
+        if (newNode.value < node.value) {
+            if (node.left === null) {
+                node.left = newNode;
+            } else {
+                this.insertNode(node.left, newNode);
+            }
+        } else {
+            if (node.right === null) {
+                node.right = newNode;
+            } else {
+                this.insertNode(node.right, newNode);
+            }
+        }
+    }
+
+    find(value) {
+        return this.findNode(this.root, value);
+    }
+
+    findNode(node, value) {
+        if (node === null) {
+            return null;
+        } else if (value < node.value) {
+            return this.findNode(node.left, value);
+        } else if (value > node.value) {
+            return this.findNode(node.right, value);
+        } else {
+            return node;
+        }
+    }
+
+    traverse(type, node = this.root) {
+        switch (type) {
+            case TraversalType.INORDER:
+                this.inorderTraversal(node);
+                break;
+            case TraversalType.PREORDER:
+                this.preorderTraversal(node);
+                break;
+            case TraversalType.POSTORDER:
+                this.postorderTraversal(node);
+                break;
+            default:
+                console.error('Invalid traversal type');
+        }
+    }
+
+    inorderTraversal(node) {
+        if (node !== null) {
+            this.inorderTraversal(node.left);
+            console.log(node.value);
+            this.inorderTraversal(node.right);
+        }
+    }
+
+    preorderTraversal(node) {
+        if (node !== null) {
+            console.log(node.value);
+            this.preorderTraversal(node.left);
+            this.preorderTraversal(node.right);
+        }
+    }
+
+    postorderTraversal(node) {
+        if (node !== null) {
+            this.postorderTraversal(node.left);
+            this.postorderTraversal(node.right);
+            console.log(node.value);
+        }
+    }
+}
+
+const bst = new BinarySearchTree();
+bst.insert(15);
+bst.insert(25);
+bst.insert(10);
+bst.insert(7);
+bst.insert(22);
+bst.insert(17);
+bst.insert(13);
+bst.insert(5);
+bst.insert(9);
+bst.insert(27);
+
+bst.traverse(TraversalType.INORDER);
+bst.traverse(TraversalType.PREORDER);
+bst.traverse(TraversalType.POSTORDER);
+
+
+//*NOTE ->
+Sure, I can provide examples of implementing a binary search tree (BST) in JavaScript using a class and an enum.
+
+Using a Class
+Here is an example of a BST implemented using a JavaScript class:
+
+javascript
+Copy code
+class TreeNode {
+    constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class BinarySearchTree {
+    constructor() {
+        this.root = null;
+    }
+
+    insert(value) {
+        const newNode = new TreeNode(value);
+        if (this.root === null) {
+            this.root = newNode;
+        } else {
+            this.insertNode(this.root, newNode);
+        }
+    }
+
+    insertNode(node, newNode) {
+        if (newNode.value < node.value) {
+            if (node.left === null) {
+                node.left = newNode;
+            } else {
+                this.insertNode(node.left, newNode);
+            }
+        } else {
+            if (node.right === null) {
+                node.right = newNode;
+            } else {
+                this.insertNode(node.right, newNode);
+            }
+        }
+    }
+
+    find(value) {
+        return this.findNode(this.root, value);
+    }
+
+    findNode(node, value) {
+        if (node === null) {
+            return null;
+        } else if (value < node.value) {
+            return this.findNode(node.left, value);
+        } else if (value > node.value) {
+            return this.findNode(node.right, value);
+        } else {
+            return node;
+        }
+    }
+
+    inorderTraversal(node = this.root) {
+        if (node !== null) {
+            this.inorderTraversal(node.left);
+            console.log(node.value);
+            this.inorderTraversal(node.right);
+        }
+    }
+}
+
+const bst = new BinarySearchTree();
+bst.insert(15);
+bst.insert(25);
+bst.insert(10);
+bst.insert(7);
+bst.insert(22);
+bst.insert(17);
+bst.insert(13);
+bst.insert(5);
+bst.insert(9);
+bst.insert(27);
+
+bst.inorderTraversal();
+
+
+//NOTE: 
+Using an Enum (ES6 Enum Emulation)
+JavaScript does not have native support for enums like some other languages (e.g., TypeScript or Java), but you can emulate enums using objects or ES6 symbols. 
+However, implementing a BST using an enum isn't straightforward as enums are typically used for defining a set of named constants. 
+Instead, enums can be used within a BST class for specific purposes, such as defining traversal types.
+In this example, TraversalType is used to specify the type of traversal. The use of an enum-like object ensures that only valid traversal types are used,
+improving the robustness and readability of the code.  Enums provide type safety, ensuring that only valid values are used. This helps prevent bugs and makes the code more robust,
+which is particularly important in large, complex systems.  Enums serve as a form of documentation, clearly defining the set of valid values for a variable. 
+This helps new developers understand the code more quickly.
+
+
+**************************************************************************************************************************************************************************************************
+PYTHON example:
+from enum import Enum
+
+class TraversalType(Enum):
+    INORDER = 1
+    PREORDER = 2
+    POSTORDER = 3
+
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        new_node = TreeNode(value)
+        if self.root is None:
+            self.root = new_node
+        else:
+            self._insert_node(self.root, new_node)
+
+    def _insert_node(self, node, new_node):
+        if new_node.value < node.value:
+            if node.left is None:
+                node.left = new_node
+            else:
+                self._insert_node(node.left, new_node)
+        else:
+            if node.right is None:
+                node.right = new_node
+            else:
+                self._insert_node(node.right, new_node)
+
+    def find(self, value):
+        return self._find_node(self.root, value)
+
+    def _find_node(self, node, value):
+        if node is None:
+            return None
+        if value < node.value:
+            return self._find_node(node.left, value)
+        elif value > node.value:
+            return self._find_node(node.right, value)
+        else:
+            return node
+
+    def traverse(self, traversal_type):
+        if traversal_type == TraversalType.INORDER:
+            self._inorder_traversal(self.root)
+        elif traversal_type == TraversalType.PREORDER:
+            self._preorder_traversal(self.root)
+        elif traversal_type == TraversalType.POSTORDER:
+            self._postorder_traversal(self.root)
+        else:
+            raise ValueError("Invalid traversal type")
+
+    def _inorder_traversal(self, node):
+        if node:
+            self._inorder_traversal(node.left)
+            print(node.value)
+            self._inorder_traversal(node.right)
+
+    def _preorder_traversal(self, node):
+        if node:
+            print(node.value)
+            self._preorder_traversal(node.left)
+            self._preorder_traversal(node.right)
+
+    def _postorder_traversal(self, node):
+        if node:
+            self._postorder_traversal(node.left)
+            self._postorder_traversal(node.right)
+            print(node.value)
+
+# Example usage
+bst = BinarySearchTree()
+bst.insert(15)
+bst.insert(25)
+bst.insert(10)
+bst.insert(7)
+bst.insert(22)
+bst.insert(17)
+bst.insert(13)
+bst.insert(5)
+bst.insert(9)
+bst.insert(27)
+
+print("Inorder Traversal:")
+bst.traverse(TraversalType.INORDER)
+
+print("\nPreorder Traversal:")
+bst.traverse(TraversalType.PREORDER)
+
+print("\nPostorder Traversal:")
+bst.traverse(TraversalType.POSTORDER)
+
+**************************************************************************************************************************************************************************************************
+JAVA example: 
+// Define the TraversalType enum
+enum TraversalType {
+    INORDER,
+    PREORDER,
+    POSTORDER
+}
+
+// Define the TreeNode class
+class TreeNode {
+    int value;
+    TreeNode left, right;
+
+    TreeNode(int value) {
+        this.value = value;
+        left = right = null;
+    }
+}
+
+// Define the BinarySearchTree class
+class BinarySearchTree {
+    TreeNode root;
+
+    BinarySearchTree() {
+        root = null;
+    }
+
+    // Insert a node into the BST
+    void insert(int value) {
+        root = insertRec(root, value);
+    }
+
+    TreeNode insertRec(TreeNode root, int value) {
+        if (root == null) {
+            root = new TreeNode(value);
+            return root;
+        }
+        if (value < root.value) {
+            root.left = insertRec(root.left, value);
+        } else if (value > root.value) {
+            root.right = insertRec(root.right, value);
+        }
+        return root;
+    }
+
+    // Traverse the BST
+    void traverse(TraversalType type) {
+        switch (type) {
+            case INORDER:
+                inorderTraversal(root);
+                break;
+            case PREORDER:
+                preorderTraversal(root);
+                break;
+            case POSTORDER:
+                postorderTraversal(root);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid traversal type");
+        }
+    }
+
+    // Inorder traversal
+    void inorderTraversal(TreeNode node) {
+        if (node != null) {
+            inorderTraversal(node.left);
+            System.out.print(node.value + " ");
+            inorderTraversal(node.right);
+        }
+    }
+
+    // Preorder traversal
+    void preorderTraversal(TreeNode node) {
+        if (node != null) {
+            System.out.print(node.value + " ");
+            preorderTraversal(node.left);
+            preorderTraversal(node.right);
+        }
+    }
+
+    // Postorder traversal
+    void postorderTraversal(TreeNode node) {
+        if (node != null) {
+            postorderTraversal(node.left);
+            postorderTraversal(node.right);
+            System.out.print(node.value + " ");
+        }
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        BinarySearchTree bst = new BinarySearchTree();
+        bst.insert(15);
+        bst.insert(25);
+        bst.insert(10);
+        bst.insert(7);
+        bst.insert(22);
+        bst.insert(17);
+        bst.insert(13);
+        bst.insert(5);
+        bst.insert(9);
+        bst.insert(27);
+
+        System.out.println("Inorder Traversal:");
+        bst.traverse(TraversalType.INORDER);
+
+        System.out.println("\nPreorder Traversal:");
+        bst.traverse(TraversalType.PREORDER);
+
+        System.out.println("\nPostorder Traversal:");
+        bst.traverse(TraversalType.POSTORDER);
+    }
+}
