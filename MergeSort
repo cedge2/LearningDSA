@@ -1,0 +1,288 @@
+// Merge Sort //
+
+Merge sort is an algortihm with an average time complexity of O(n log n). It uses a divide and conquer method -> splits first, merges after.  It works by putting the numbers into an unsorted pile, 
+and splits the piles into two. Now, you will have two unsorted piles of numbers.  Keep splitting the resultint piles until they can't be split anymore.  In the end, you would have n piles with
+one number per pile.  Begin to merge thepiles together by pairing them sequentially.  During each merge, put the contents in sorted order.  This is fairly easy, because each individual pile is 
+already sorted.
+
+JAVASCRIPT EXAMPLES:
+
+
+*** Top-down approach, which utilizes recursion - 
+
+
+function mergeSort(arr) {
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    const middle = Math.floor(arr.length / 2);
+    const left = arr.slice(0, middle);
+    const right = arr.slice(middle);
+
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right) {
+    let result = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+
+    while (leftIndex < left.length && rightIndex < right.length) {
+        if (left[leftIndex] < right[rightIndex]) {
+            result.push(left[leftIndex]);
+            leftIndex++;
+        } else {
+            result.push(right[rightIndex]);
+            rightIndex++;
+        }
+    }
+
+    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+}
+
+// Example usage:
+const array = [5, 3, 8, 4, 2];
+const sortedArray = mergeSort(array);
+console.log(sortedArray); // Output: [2, 3, 4, 5, 8]
+
+*** Bottom-up approach, which iterates over the array merging subarrays of increasing size:
+// Bottom-Up Merge Sort
+
+function bottomUpMergeSort(arr) {
+    let width;
+    let n = arr.length;
+    let aux = Array.from(arr);
+
+    for (width = 1; width < n; width = 2 * width) {
+        for (let i = 0; i < n; i = i + 2 * width) {
+            merge(arr, aux, i, Math.min(i + width, n), Math.min(i + 2 * width, n));
+        }
+    }
+    return arr;
+}
+
+function merge(arr, aux, left, mid, right) {
+    let i = left;
+    let j = mid;
+    let k = left;
+
+    while (i < mid && j < right) {
+        if (aux[i] < aux[j]) {
+            arr[k++] = aux[i++];
+        } else {
+            arr[k++] = aux[j++];
+        }
+    }
+
+    while (i < mid) {
+        arr[k++] = aux[i++];
+    }
+
+    while (j < right) {
+        arr[k++] = aux[j++];
+    }
+
+    for (let i = left; i < right; i++) {
+        aux[i] = arr[i];
+    }
+}
+
+// Example usage:
+const array = [5, 3, 8, 4, 2];
+const sortedArray = bottomUpMergeSort(array);
+console.log(sortedArray); // Output: [2, 3, 4, 5, 8]
+
+****************************************************************************************************************************************************************************************************
+//PYTHON examples: //
+
+** Top-down:
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    middle = len(arr) // 2
+    left = arr[:middle]
+    right = arr[middle:]
+
+    return merge(merge_sort(left), merge_sort(right))
+
+def merge(left, right):
+    result = []
+    left_index = 0
+    right_index = 0
+
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] < right[right_index]:
+            result.append(left[left_index])
+            left_index += 1
+        else:
+            result.append(right[right_index])
+            right_index += 1
+
+    result.extend(left[left_index:])
+    result.extend(right[right_index:])
+    return result
+
+# Example usage:
+array = [5, 3, 8, 4, 2]
+sorted_array = merge_sort(array)
+print(sorted_array)  # Output: [2, 3, 4, 5, 8]
+
+
+
+**Bottom-up:
+
+
+
+def bottom_up_merge_sort(arr):
+    width = 1
+    n = len(arr)
+    aux = arr[:]
+
+    while width < n:
+        for i in range(0, n, 2 * width):
+            left = i
+            mid = min(i + width, n)
+            right = min(i + 2 * width, n)
+            merge(arr, aux, left, mid, right)
+        width *= 2
+    return arr
+
+def merge(arr, aux, left, mid, right):
+    i, j, k = left, mid, left
+
+    while i < mid and j < right:
+        if aux[i] < aux[j]:
+            arr[k] = aux[i]
+            i += 1
+        else:
+            arr[k] = aux[j]
+            j += 1
+        k += 1
+
+    while i < mid:
+        arr[k] = aux[i]
+        i += 1
+        k += 1
+
+    while j < right:
+        arr[k] = aux[j]
+        j += 1
+        k += 1
+
+    for i in range(left, right):
+        aux[i] = arr[i]
+
+# Example usage:
+array = [5, 3, 8, 4, 2]
+sorted_array = bottom_up_merge_sort(array)
+print(sorted_array)  # Output: [2, 3, 4, 5, 8]
+
+**************************************************************************************************************************************************************************************************
+
+//JAVA examples://
+
+** Top-down: 
+
+import java.util.Arrays;
+
+public class TopDownMergeSort {
+
+    public static void main(String[] args) {
+        int[] array = {5, 3, 8, 4, 2};
+        mergeSort(array);
+        System.out.println(Arrays.toString(array)); // Output: [2, 3, 4, 5, 8]
+    }
+
+    public static void mergeSort(int[] arr) {
+        if (arr.length <= 1) {
+            return;
+        }
+
+        int middle = arr.length / 2;
+        int[] left = Arrays.copyOfRange(arr, 0, middle);
+        int[] right = Arrays.copyOfRange(arr, middle, arr.length);
+
+        mergeSort(left);
+        mergeSort(right);
+
+        merge(arr, left, right);
+    }
+
+    private static void merge(int[] result, int[] left, int[] right) {
+        int i = 0, j = 0, k = 0;
+
+        while (i < left.length && j < right.length) {
+            if (left[i] < right[j]) {
+                result[k++] = left[i++];
+            } else {
+                result[k++] = right[j++];
+            }
+        }
+
+        while (i < left.length) {
+            result[k++] = left[i++];
+        }
+
+        while (j < right.length) {
+            result[k++] = right[j++];
+        }
+    }
+}
+
+** Bottom-up :
+
+// Bottom-Up Merge Sort
+
+import java.util.Arrays;
+
+public class BottomUpMergeSort {
+
+    public static void main(String[] args) {
+        int[] array = {5, 3, 8, 4, 2};
+        bottomUpMergeSort(array);
+        System.out.println(Arrays.toString(array)); // Output: [2, 3, 4, 5, 8]
+    }
+
+    public static void bottomUpMergeSort(int[] arr) {
+        int n = arr.length;
+        int[] aux = Arrays.copyOf(arr, n);
+
+        for (int width = 1; width < n; width = 2 * width) {
+            for (int i = 0; i < n; i = i + 2 * width) {
+                int left = i;
+                int mid = Math.min(i + width, n);
+                int right = Math.min(i + 2 * width, n);
+                merge(arr, aux, left, mid, right);
+            }
+        }
+    }
+
+    private static void merge(int[] arr, int[] aux, int left, int mid, int right) {
+        int i = left;
+        int j = mid;
+        int k = left;
+
+        while (i < mid && j < right) {
+            if (aux[i] < aux[j]) {
+                arr[k++] = aux[i++];
+            } else {
+                arr[k++] = aux[j++];
+            }
+        }
+
+        while (i < mid) {
+            arr[k++] = aux[i++];
+        }
+
+        while (j < right) {
+            arr[k++] = aux[j++];
+        }
+
+        for (int l = left; l < right; l++) {
+            aux[l] = arr[l];
+        }
+    }
+}
