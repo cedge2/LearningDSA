@@ -1,0 +1,276 @@
+// Boyer-Moore String Search //
+
+The boyerMooreSearch function can be used to find the index of the first occurrence of the pattern in the text. 
+If the pattern is found, it returns the starting index; otherwise, it returns -1.
+
+
+
+// JAVASCRIPT example: //
+
+
+function buildBadCharacterTable(pattern) {
+    const table = {};
+    for (let i = 0; i < pattern.length; i++) {
+        table[pattern[i]] = i;
+    }
+    return table;
+}
+
+function buildGoodSuffixTable(pattern) {
+    const m = pattern.length;
+    const table = new Array(m).fill(m);
+    const lastPrefixPosition = m;
+
+    for (let i = m - 1; i >= 0; i--) {
+        if (isPrefix(pattern, i + 1)) {
+            lastPrefixPosition = i + 1;
+        }
+        table[m - 1 - i] = lastPrefixPosition - i + m - 1;
+    }
+
+    for (let i = 0; i < m - 1; i++) {
+        const slen = suffixLength(pattern, i);
+        table[slen] = m - 1 - i + slen;
+    }
+
+    return table;
+}
+
+function isPrefix(pattern, p) {
+    for (let i = p, j = 0; i < pattern.length; i++, j++) {
+        if (pattern[i] !== pattern[j]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function suffixLength(pattern, p) {
+    let len = 0;
+    for (let i = p, j = pattern.length - 1; i >= 0 && pattern[i] === pattern[j]; i--, j--) {
+        len++;
+    }
+    return len;
+}
+
+function boyerMooreSearch(text, pattern) {
+    const n = text.length;
+    const m = pattern.length;
+    if (m === 0) return 0;
+
+    const badCharTable = buildBadCharacterTable(pattern);
+    const goodSuffixTable = buildGoodSuffixTable(pattern);
+
+    let s = 0;
+    while (s <= n - m) {
+        let j = m - 1;
+
+        while (j >= 0 && pattern[j] === text[s + j]) {
+            j--;
+        }
+
+        if (j < 0) {
+            return s; // Match found
+        } else {
+            const charShift = badCharTable[text[s + j]] !== undefined ? j - badCharTable[text[s + j]] : j + 1;
+            const suffixShift = goodSuffixTable[j + 1];
+            s += Math.max(charShift, suffixShift);
+        }
+    }
+
+    return -1; // No match found
+}
+
+// Example usage
+const text = "findinaneedleinahaystack";
+const pattern = "needle";
+const result = boyerMooreSearch(text, pattern);
+
+if (result !== -1) {
+    console.log(`Pattern found at index ${result}`);
+} else {
+    console.log("Pattern not found");
+}
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def build_bad_character_table(pattern):
+    table = {}
+    for i in range(len(pattern)):
+        table[pattern[i]] = i
+    return table
+
+def is_prefix(pattern, p):
+    j = 0
+    for i in range(p, len(pattern)):
+        if pattern[i] != pattern[j]:
+            return False
+        j += 1
+    return True
+
+def suffix_length(pattern, p):
+    length = 0
+    j = len(pattern) - 1
+    for i in range(p, -1, -1):
+        if pattern[i] == pattern[j]:
+            length += 1
+            j -= 1
+        else:
+            break
+    return length
+
+def build_good_suffix_table(pattern):
+    m = len(pattern)
+    table = [0] * m
+    last_prefix_position = m
+
+    for i in range(m - 1, -1, -1):
+        if is_prefix(pattern, i + 1):
+            last_prefix_position = i + 1
+        table[m - 1 - i] = last_prefix_position + (m - 1 - i)
+
+    for i in range(m - 1):
+        slen = suffix_length(pattern, i)
+        table[slen] = m - 1 - i + slen
+
+    return table
+
+def boyer_moore_search(text, pattern):
+    n = len(text)
+    m = len(pattern)
+    if m == 0:
+        return 0
+
+    bad_char_table = build_bad_character_table(pattern)
+    good_suffix_table = build_good_suffix_table(pattern)
+
+    s = 0
+    while s <= n - m:
+        j = m - 1
+
+        while j >= 0 and pattern[j] == text[s + j]:
+            j -= 1
+
+        if j < 0:
+            return s  # Match found
+        else:
+            char_shift = j - bad_char_table.get(text[s + j], -1)
+            suffix_shift = good_suffix_table[j + 1]
+            s += max(char_shift, suffix_shift)
+
+    return -1  # No match found
+
+# Example usage
+text = "findinaneedleinahaystack"
+pattern = "needle"
+result = boyer_moore_search(text, pattern)
+
+if result != -1:
+    print(f"Pattern found at index {result}")
+else:
+    print("Pattern not found")
+
+**************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class BoyerMoore {
+
+    private static Map<Character, Integer> buildBadCharacterTable(String pattern) {
+        Map<Character, Integer> table = new HashMap<>();
+        for (int i = 0; i < pattern.length(); i++) {
+            table.put(pattern.charAt(i), i);
+        }
+        return table;
+    }
+
+    private static boolean isPrefix(String pattern, int p) {
+        int j = 0;
+        for (int i = p; i < pattern.length(); i++) {
+            if (pattern.charAt(i) != pattern.charAt(j)) {
+                return false;
+            }
+            j++;
+        }
+        return true;
+    }
+
+    private static int suffixLength(String pattern, int p) {
+        int length = 0;
+        int j = pattern.length() - 1;
+        for (int i = p; i >= 0; i--) {
+            if (pattern.charAt(i) == pattern.charAt(j)) {
+                length++;
+                j--;
+            } else {
+                break;
+            }
+        }
+        return length;
+    }
+
+    private static int[] buildGoodSuffixTable(String pattern) {
+        int m = pattern.length();
+        int[] table = new int[m];
+        int lastPrefixPosition = m;
+
+        for (int i = m - 1; i >= 0; i--) {
+            if (isPrefix(pattern, i + 1)) {
+                lastPrefixPosition = i + 1;
+            }
+            table[m - 1 - i] = lastPrefixPosition + (m - 1 - i);
+        }
+
+        for (int i = 0; i < m - 1; i++) {
+            int slen = suffixLength(pattern, i);
+            table[slen] = m - 1 - i + slen;
+        }
+
+        return table;
+    }
+
+    public static int boyerMooreSearch(String text, String pattern) {
+        int n = text.length();
+        int m = pattern.length();
+        if (m == 0) return 0;
+
+        Map<Character, Integer> badCharTable = buildBadCharacterTable(pattern);
+        int[] goodSuffixTable = buildGoodSuffixTable(pattern);
+
+        int s = 0;
+        while (s <= n - m) {
+            int j = m - 1;
+
+            while (j >= 0 && pattern.charAt(j) == text.charAt(s + j)) {
+                j--;
+            }
+
+            if (j < 0) {
+                return s; // Match found
+            } else {
+                int charShift = j - badCharTable.getOrDefault(text.charAt(s + j), -1);
+                int suffixShift = goodSuffixTable[j + 1];
+                s += Math.max(charShift, suffixShift);
+            }
+        }
+
+        return -1; // No match found
+    }
+
+    public static void main(String[] args) {
+        String text = "findinaneedleinahaystack";
+        String pattern = "needle";
+        int result = boyerMooreSearch(text, pattern);
+
+        if (result != -1) {
+            System.out.println("Pattern found at index " + result);
+        } else {
+            System.out.println("Pattern not found");
+        }
+    }
+}
