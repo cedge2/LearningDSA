@@ -1,0 +1,116 @@
+// Select Minimun / Maximum //
+
+The goal of this algorithm is to find the min/max in an unsorted array.  We have an array of generic objects, and we iterate over all the objects keeping track of hte min/max element so far. O(n)
+
+
+// JAVASCRIPT example: //
+
+
+function findMinMax(arr) {
+  if (arr.length === 0) {
+    throw new Error("Array is empty");
+  }
+
+  // Initialize min and max with the first element of the array
+  let min = arr[0];
+  let max = arr[0];
+
+  // Iterate over the array starting from the second element
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < min) {
+      min = arr[i];
+    }
+    if (arr[i] > max) {
+      max = arr[i];
+    }
+  }
+
+  return { min, max };
+}
+
+// Example usage:
+const arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
+const result = findMinMax(arr);
+console.log(`Min: ${result.min}, Max: ${result.max}`);  // Output: Min: 1, Max: 9
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def find_min_max(arr):
+    if len(arr) == 0:
+        raise ValueError("Array is empty")
+
+    # Initialize min and max with the first element of the array
+    min_val = arr[0]
+    max_val = arr[0]
+
+    # Iterate over the array starting from the second element
+    for elem in arr[1:]:
+        if elem < min_val:
+            min_val = elem
+        if elem > max_val:
+            max_val = elem
+
+    return min_val, max_val
+
+# Example usage:
+arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+min_val, max_val = find_min_max(arr)
+print(f"Min: {min_val}, Max: {max_val}")  # Output: Min: 1, Max: 9
+
+
+***************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class MinMaxFinder {
+
+    public static <T> MinMax<T> findMinMax(T[] array, Comparator<? super T> comparator) {
+        if (array.length == 0) {
+            throw new IllegalArgumentException("Array is empty");
+        }
+
+        T min = array[0];
+        T max = array[0];
+
+        for (int i = 1; i < array.length; i++) {
+            if (comparator.compare(array[i], min) < 0) {
+                min = array[i];
+            }
+            if (comparator.compare(array[i], max) > 0) {
+                max = array[i];
+            }
+        }
+
+        return new MinMax<>(min, max);
+    }
+
+    public static void main(String[] args) {
+        Integer[] arr = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+        MinMax<Integer> result = findMinMax(arr, Comparator.naturalOrder());
+        System.out.println("Min: " + result.getMin() + ", Max: " + result.getMax());
+    }
+}
+
+class MinMax<T> {
+    private final T min;
+    private final T max;
+
+    public MinMax(T min, T max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public T getMin() {
+        return min;
+    }
+
+    public T getMax() {
+        return max;
+    }
+}
