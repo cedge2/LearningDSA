@@ -1,0 +1,108 @@
+// Selection Sampling //
+
+The goal is to select k items at random from a collection of n items.  Let's say you have a deck of 52 playing cards and you need to draw 10 cards at random.
+
+
+// JAVASCRIPT example: //
+
+function reservoirSampling(array, k) {
+    let reservoir = [];
+
+    // Initialize reservoir with the first k elements of the array
+    for (let i = 0; i < k; i++) {
+        reservoir[i] = array[i];
+    }
+
+    // Iterate through the remaining elements
+    for (let i = k; i < array.length; i++) {
+        // Pick a random index from 0 to i
+        let j = Math.floor(Math.random() * (i + 1));
+
+        // If the randomly picked index is smaller than k, replace
+        // the element at index j in the reservoir with array[i]
+        if (j < k) {
+            reservoir[j] = array[i];
+        }
+    }
+
+    return reservoir;
+}
+
+// Example usage:
+let array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+let k = 3;
+let sample = reservoirSampling(array, k);
+console.log(sample);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import random
+
+def reservoir_sampling(array, k):
+    # Initialize the reservoir with the first k elements
+    reservoir = array[:k]
+
+    # Iterate through the remaining elements
+    for i in range(k, len(array)):
+        # Pick a random index from 0 to i
+        j = random.randint(0, i)
+
+        # If the randomly picked index is smaller than k, replace
+        # the element at index j in the reservoir with array[i]
+        if j < k:
+            reservoir[j] = array[i]
+
+    return reservoir
+
+# Example usage:
+array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+k = 3
+sample = reservoir_sampling(array, k)
+print(sample)
+
+
+***************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.Random;
+
+public class ReservoirSampling {
+    public static int[] reservoirSampling(int[] array, int k) {
+        int[] reservoir = new int[k];
+        Random rand = new Random();
+
+        // Initialize reservoir with the first k elements
+        for (int i = 0; i < k; i++) {
+            reservoir[i] = array[i];
+        }
+
+        // Iterate through the remaining elements
+        for (int i = k; i < array.length; i++) {
+            // Pick a random index from 0 to i
+            int j = rand.nextInt(i + 1);
+
+            // If the randomly picked index is smaller than k, replace
+            // the element at index j in the reservoir with array[i]
+            if (j < k) {
+                reservoir[j] = array[i];
+            }
+        }
+
+        return reservoir;
+    }
+
+    public static void main(String[] args) {
+        int[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int k = 3;
+        int[] sample = reservoirSampling(array, k);
+
+        // Print the sampled elements
+        for (int num : sample) {
+            System.out.print(num + " ");
+        }
+    }
+}
