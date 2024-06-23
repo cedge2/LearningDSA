@@ -1,0 +1,176 @@
+// K-th Largest Element //
+
+Given an integer array a, write an algorithm that finds the k-th largest element in the array.  For example, the 1st largest element is the max val that occurs in the array.  If the array has n 
+elements, the nth largest element is the minimum.  The median is the n/2-th largest element. 
+
+ The Naive Solution -  The complexity is O(n log n), because it first sorts the array.  This is the easiest method to come up with, but there is a better solution that is O(n). 
+
+function findKthLargest(nums, k) {
+  // Step 1: Sort the array in descending order
+  nums.sort((a, b) => b - a);
+
+  // Step 2: Return the k-1 indexed element
+  return nums[k - 1];
+}
+
+// Example usage:
+const nums = [3, 2, 1, 5, 6, 4];
+const k = 2;
+console.log(findKthLargest(nums, k)); // Output: 5
+
+  The Better Solution - The complexity is now O(n), by combining ideas of binary search and quicksort.  This is more effective than the previous solution.
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// JAVASCRIPT example: //
+
+function findKthLargest(nums, k) {
+  // Shuffle the array to ensure average case O(n) for quicksort
+  shuffle(nums);
+
+  // Perform quicksort
+  let left = 0,
+    right = nums.length - 1;
+  while (left <= right) {
+    const pivotIndex = partition(nums, left, right);
+    if (pivotIndex === k - 1) {
+      return nums[pivotIndex];
+    } else if (pivotIndex < k - 1) {
+      left = pivotIndex + 1;
+    } else {
+      right = pivotIndex - 1;
+    }
+  }
+
+  return -1; // Return -1 if k is out of bounds
+}
+
+function partition(nums, left, right) {
+  const pivot = nums[Math.floor((left + right) / 2)];
+  while (left <= right) {
+    while (nums[left] > pivot) left++;
+    while (nums[right] < pivot) right--;
+    if (left <= right) {
+      [nums[left], nums[right]] = [nums[right], nums[left]];
+      left++;
+      right--;
+    }
+  }
+  return left;
+}
+
+function shuffle(nums) {
+  for (let i = nums.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [nums[i], nums[j]] = [nums[j], nums[i]];
+  }
+}
+
+// Example usage:
+const nums = [3, 2, 1, 5, 6, 4];
+const k = 2;
+console.log(findKthLargest(nums, k)); // Output: 5
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import random
+
+def find_kth_largest(nums, k):
+    shuffle(nums)
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        pivot_index = partition(nums, left, right)
+        if pivot_index == k - 1:
+            return nums[pivot_index]
+        elif pivot_index < k - 1:
+            left = pivot_index + 1
+        else:
+            right = pivot_index - 1
+    return -1
+
+def partition(nums, left, right):
+    pivot = nums[(left + right) // 2]
+    while left <= right:
+        while nums[left] > pivot:
+            left += 1
+        while nums[right] < pivot:
+            right -= 1
+        if left <= right:
+            nums[left], nums[right] = nums[right], nums[left]
+            left += 1
+            right -= 1
+    return left
+
+def shuffle(nums):
+    for i in range(len(nums) - 1, 0, -1):
+        j = random.randint(0, i)
+        nums[i], nums[j] = nums[j], nums[i]
+
+# Example usage
+nums = [3, 2, 1, 5, 6, 4]
+k = 2
+print(find_kth_largest(nums, k))  # Output: 5
+
+
+**************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.*;
+
+public class KthLargestElement {
+
+    public static int findKthLargest(int[] nums, int k) {
+        shuffle(nums);
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int pivotIndex = partition(nums, left, right);
+            if (pivotIndex == k - 1) {
+                return nums[pivotIndex];
+            } else if (pivotIndex < k - 1) {
+                left = pivotIndex + 1;
+            } else {
+                right = pivotIndex - 1;
+            }
+        }
+        return -1; // Return -1 if k is out of bounds
+    }
+
+    public static int partition(int[] nums, int left, int right) {
+        int pivot = nums[(left + right) / 2];
+        while (left <= right) {
+            while (nums[left] > pivot) {
+                left++;
+            }
+            while (nums[right] < pivot) {
+                right--;
+            }
+            if (left <= right) {
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        return left;
+    }
+
+    public static void shuffle(int[] nums) {
+        Random random = new Random();
+        for (int i = nums.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {3, 2, 1, 5, 6, 4};
+        int k = 2;
+        System.out.println(findKthLargest(nums, k)); // Output: 5
+    }
+}
