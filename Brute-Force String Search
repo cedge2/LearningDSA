@@ -1,0 +1,103 @@
+// Brute-Force String Search //
+
+The brute-force string search algorithm, also known as the naive string search, is a straightforward method for finding a substring (called the pattern) within another string (called the text).
+The algorithm works by checking for the presence of the pattern at each position in the text, one by one.  The brute-force approach can be efficient and simple for small texts and patterns where 
+the overhead of more complex algorithms isn't justified.  When simplicity and ease of implementation are more important than performance.  Or, just for education / to understand the basics of 
+string search algorithms before moving on to more efficient ones.  
+
+
+// JAVASCRIPT example: //
+
+function bruteForceSearch(text, pattern) {
+  const n = text.length;
+  const m = pattern.length;
+
+  for (let i = 0; i <= n - m; i++) {
+    let j;
+    for (j = 0; j < m; j++) {
+      if (text[i + j] !== pattern[j]) {
+        break;
+      }
+    }
+    if (j === m) {
+      return i; // Pattern found at index i
+    }
+  }
+  return -1; // Pattern not found
+}
+
+// Example usage
+const text = "hello world";
+const pattern = "world";
+const result = bruteForceSearch(text, pattern);
+
+if (result !== -1) {
+  console.log(`Pattern found at index ${result}`);
+} else {
+  console.log("Pattern not found");
+}
+// output: Pattern found at index 6
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def brute_force_search(text, pattern):
+    n = len(text)
+    m = len(pattern)
+
+    for i in range(n - m + 1):
+        j = 0
+        while j < m and text[i + j] == pattern[j]:
+            j += 1
+        if j == m:
+            return i  # Pattern found at index i
+    return -1  # Pattern not found
+
+# Example usage
+text = "hello world"
+pattern = "world"
+result = brute_force_search(text, pattern)
+
+if result != -1:
+    print(f"Pattern found at index {result}")
+else:
+    print("Pattern not found")
+
+
+***************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+public class BruteForceSearch {
+    public static int bruteForceSearch(String text, String pattern) {
+        int n = text.length();
+        int m = pattern.length();
+
+        for (int i = 0; i <= n - m; i++) {
+            int j;
+            for (j = 0; j < m; j++) {
+                if (text.charAt(i + j) != pattern.charAt(j)) {
+                    break;
+                }
+            }
+            if (j == m) {
+                return i; // Pattern found at index i
+            }
+        }
+        return -1; // Pattern not found
+    }
+
+    public static void main(String[] args) {
+        String text = "hello world";
+        String pattern = "world";
+        int result = bruteForceSearch(text, pattern);
+
+        if (result != -1) {
+            System.out.println("Pattern found at index " + result);
+        } else {
+            System.out.println("Pattern not found");
+        }
+    }
+}
