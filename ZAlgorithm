@@ -1,0 +1,150 @@
+// Z algorithm: //
+
+The Z algorithm is a linear time pattern matching algorithm that is used to find all occurrences of a pattern string P in a text string T. It achieves this by precomputing a Z array that contains
+the length of the longest substring starting from each position in T that matches a prefix of P. This array is then used to efficiently find all occurrences of P in T by comparing the Z values of 
+corresponding positions in P and T.
+
+
+// JAVASCRIPT example: //
+
+function zAlgorithm(text, pattern) {
+    const concatString = pattern + "$" + text;
+    const n = concatString.length;
+    const zArray = [];
+    let l = 0;
+    let r = 0;
+
+    for (let i = 1; i < n; i++) {
+        if (i > r) {
+            l = r = i;
+            while (r < n && concatString[r - l] === concatString[r]) {
+                r++;
+            }
+            zArray.push(r - l);
+            r--;
+        } else {
+            const k = i - l;
+            if (zArray[k] < r - i + 1) {
+                zArray.push(zArray[k]);
+            } else {
+                l = i;
+                while (r < n && concatString[r - l] === concatString[r]) {
+                    r++;
+                }
+                zArray.push(r - l);
+                r--;
+            }
+        }
+    }
+
+    const patternLength = pattern.length;
+    const matches = [];
+    for (let i = patternLength + 1; i < n; i++) {
+        if (zArray[i] === patternLength) {
+            matches.push(i - patternLength - 1);
+        }
+    }
+
+    return matches;
+}
+
+// Example usage
+const text = "AAABAABAAAA";
+const pattern = "AABA";
+console.log(zAlgorithm(text, pattern)); // Output: [1, 4]
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTON example: //
+
+def z_algorithm(text, pattern):
+    concat_string = pattern + "$" + text
+    n = len(concat_string)
+    z_array = [0] * n
+    l, r = 0, 0
+
+    for i in range(1, n):
+        if i > r:
+            l = r = i
+            while r < n and concat_string[r - l] == concat_string[r]:
+                r += 1
+            z_array[i] = r - l
+            r -= 1
+        else:
+            k = i - l
+            if z_array[k] < r - i + 1:
+                z_array[i] = z_array[k]
+            else:
+                l = i
+                while r < n and concat_string[r - l] == concat_string[r]:
+                    r += 1
+                z_array[i] = r - l
+                r -= 1
+
+    pattern_length = len(pattern)
+    matches = [i - pattern_length - 1 for i in range(pattern_length + 1, n) if z_array[i] == pattern_length]
+    return matches
+
+# Example usage
+text = "AAABAABAAAA"
+pattern = "AABA"
+print(z_algorithm(text, pattern))  # Output: [1, 4]
+
+
+***************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ZAlgorithm {
+
+    public static List<Integer> zAlgorithm(String text, String pattern) {
+        String concatString = pattern + "$" + text;
+        int n = concatString.length();
+        int[] zArray = new int[n];
+        int l = 0, r = 0;
+
+        for (int i = 1; i < n; i++) {
+            if (i > r) {
+                l = r = i;
+                while (r < n && concatString.charAt(r - l) == concatString.charAt(r)) {
+                    r++;
+                }
+                zArray[i] = r - l;
+                r--;
+            } else {
+                int k = i - l;
+                if (zArray[k] < r - i + 1) {
+                    zArray[i] = zArray[k];
+                } else {
+                    l = i;
+                    while (r < n && concatString.charAt(r - l) == concatString.charAt(r)) {
+                        r++;
+                    }
+                    zArray[i] = r - l;
+                    r--;
+                }
+            }
+        }
+
+        List<Integer> matches = new ArrayList<>();
+        int patternLength = pattern.length();
+        for (int i = patternLength + 1; i < n; i++) {
+            if (zArray[i] == patternLength) {
+                matches.add(i - patternLength - 1);
+            }
+        }
+
+        return matches;
+    }
+
+    public static void main(String[] args) {
+        String text = "AAABAABAAAA";
+        String pattern = "AABA";
+        List<Integer> matches = zAlgorithm(text, pattern);
+        System.out.println(matches);  // Output: [1, 4]
+    }
+}
