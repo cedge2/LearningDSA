@@ -1,0 +1,268 @@
+// Huffman Coding //
+
+Store more common elements using a smaller number of bits.  Huffman coding is a method used in computer science for lossless data compression. It assigns variable-length codes to input 
+characters, with shorter codes assigned to more frequent characters. This results in a prefix-free code, meaning no code is a prefix of any other, which allows for efficient decoding. 
+The algorithm constructs a binary tree called the Huffman tree to determine the code assignments, with characters represented as leaf nodes and their frequencies determining their position 
+in the tree.
+
+
+
+// JAVASCRIPT example: //
+
+
+class Node {
+    constructor(char, freq) {
+        this.char = char;
+        this.freq = freq;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+function buildHuffmanTree(str) {
+    const freqMap = new Map();
+    for (let char of str) {
+        freqMap.set(char, (freqMap.get(char) || 0) + 1);
+    }
+
+    const pq = Array.from(freqMap, ([char, freq]) => new Node(char, freq));
+    while (pq.length > 1) {
+        pq.sort((a, b) => a.freq - b.freq);
+        const left = pq.shift();
+        const right = pq.shift();
+        const newNode = new Node(null, left.freq + right.freq);
+        newNode.left = left;
+        newNode.right = right;
+        pq.push(newNode);
+    }
+
+    return pq.shift();
+}
+
+function buildHuffmanTable(node, prefix = '', table = {}) {
+    if (node) {
+        if (node.char !== null) {
+            table[node.char] = prefix;
+        }
+        buildHuffmanTable(node.left, prefix + '0', table);
+        buildHuffmanTable(node.right, prefix + '1', table);
+    }
+    return table;
+}
+
+function huffmanEncode(str) {
+    const root = buildHuffmanTree(str);
+    const table = buildHuffmanTable(root);
+    return str.split('').map(char => table[char]).join('');
+}
+
+function huffmanDecode(str, root) {
+    let node = root;
+    const result = [];
+    for (let bit of str) {
+        if (bit === '0') {
+            node = node.left;
+        } else {
+            node = node.right;
+        }
+        if (node.char !== null) {
+            result.push(node.char);
+            node = root;
+        }
+    }
+    return result.join('');
+}
+
+// Example usage
+const input = 'hello world';
+const encoded = huffmanEncode(input);
+console.log('Encoded:', encoded);
+
+const root = buildHuffmanTree(input);
+const decoded = huffmanDecode(encoded, root);
+console.log('Decoded:', decoded);
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// PYTHON example: //
+
+
+from heapq import heappush, heappop, heapify
+from collections import defaultdict
+
+class Node:
+    def __init__(self, char, freq):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(text):
+    freq = defaultdict(int)
+    for char in text:
+        freq[char] += 1
+
+    heap = [Node(char, f) for char, f in freq.items()]
+    heapify(heap)
+
+    while len(heap) > 1:
+        left = heappop(heap)
+        right = heappop(heap)
+        parent = Node(None, left.freq + right.freq)
+        parent.left = left
+        parent.right = right
+        heappush(heap, parent)
+
+    return heap[0]
+
+def build_huffman_table(node, prefix="", table={}):
+    if node is not None:
+        if node.char is not None:
+            table[node.char] = prefix
+        build_huffman_table(node.left, prefix + "0", table)
+        build_huffman_table(node.right, prefix + "1", table)
+    return table
+
+def huffman_encode(text):
+    root = build_huffman_tree(text)
+    table = build_huffman_table(root)
+    encoded_text = "".join(table[char] for char in text)
+    return encoded_text, root
+
+def huffman_decode(encoded_text, root):
+    decoded_text = []
+    node = root
+    for bit in encoded_text:
+        if bit == "0":
+            node = node.left
+        else:
+            node = node.right
+        if node.char is not None:
+            decoded_text.append(node.char)
+            node = root
+    return "".join(decoded_text)
+
+# Example usage
+text = "hello world"
+encoded_text, root = huffman_encode(text)
+print("Encoded:", encoded_text)
+decoded_text = huffman_decode(encoded_text, root)
+print("Decoded:", decoded_text)
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+
+import java.util.*;
+
+class Node implements Comparable<Node> {
+    char data;
+    int frequency;
+    Node left, right;
+
+    public Node(char data, int frequency) {
+        this.data = data;
+        this.frequency = frequency;
+    }
+
+    @Override
+    public int compareTo(Node other) {
+        return this.frequency - other.frequency;
+    }
+}
+
+public class Huffman {
+
+    public static Node buildHuffmanTree(String text) {
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+        for (char c : text.toCharArray()) {
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
+        }
+
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        for (Map.Entry<Character, Integer> entry : frequencyMap.entrySet()) {
+            pq.offer(new Node(entry.getKey(), entry.getValue()));
+        }
+
+        while (pq.size() > 1) {
+            Node left = pq.poll();
+            Node right = pq.poll();
+            Node parent = new Node('\0', left.frequency + right.frequency);
+            parent.left = left;
+            parent.right = right;
+            pq.offer(parent);
+        }
+
+        return pq.poll();
+    }
+
+    public static Map<Character, String> buildHuffmanTable(Node root) {
+        Map<Character, String> huffmanTable = new HashMap<>();
+        buildHuffmanTableHelper(root, "", huffmanTable);
+        return huffmanTable;
+    }
+
+    private static void buildHuffmanTableHelper(Node node, String code, Map<Character, String> huffmanTable) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left == null && node.right == null) {
+            huffmanTable.put(node.data, code);
+            return;
+        }
+
+        buildHuffmanTableHelper(node.left, code + "0", huffmanTable);
+        buildHuffmanTableHelper(node.right, code + "1", huffmanTable);
+    }
+
+    public static String huffmanEncode(String text) {
+        Node root = buildHuffmanTree(text);
+        Map<Character, String> huffmanTable = buildHuffmanTable(root);
+
+        StringBuilder encodedText = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            encodedText.append(huffmanTable.get(c));
+        }
+
+        return encodedText.toString();
+    }
+
+    public static String huffmanDecode(String encodedText, Node root) {
+        StringBuilder decodedText = new StringBuilder();
+        Node current = root;
+
+        for (char bit : encodedText.toCharArray()) {
+            if (bit == '0') {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+
+            if (current.left == null && current.right == null) {
+                decodedText.append(current.data);
+                current = root;
+            }
+        }
+
+        return decodedText.toString();
+    }
+
+    public static void main(String[] args) {
+        String text = "hello world";
+        String encodedText = huffmanEncode(text);
+        System.out.println("Encoded: " + encodedText);
+
+        Node root = buildHuffmanTree(text);
+        String decodedText = huffmanDecode(encodedText, root);
+        System.out.println("Decoded: " + decodedText);
+    }
+}
