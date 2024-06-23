@@ -1,0 +1,83 @@
+// Run Length Encoding //
+
+# Store repeated values as a single byte and a count.  Run-length encoding (RLE) is a simple form of data compression where consecutive data elements that are the same are replaced with a single 
+# value and a count of how many times it repeats. For example, the string "AAABBBCCDAA" can be encoded as "3A3B2C1D2A". RLE is particularly useful for compressing data with long consecutive 
+# sequences of the same value, such as images or certain types of text data.
+
+
+// JAVASCRIPT example: //
+
+function runLengthEncode(str) {
+    let encoded = '';
+    let count = 1;
+
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === str[i + 1]) {
+            count++;
+        } else {
+            encoded += count + str[i];
+            count = 1;
+        }
+    }
+
+    return encoded;
+}
+
+// Example usage
+const originalString = 'AAABBBCCDAA';
+const encodedString = runLengthEncode(originalString);
+console.log(encodedString); // Output: "3A3B2C1D2A"
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def run_length_encode(input_string):
+    encoded_string = ''
+    count = 1
+
+    for i in range(len(input_string)):
+        # If the current character is the same as the next one, increment count
+        if i < len(input_string) - 1 and input_string[i] == input_string[i + 1]:
+            count += 1
+        else:
+            # Append the count and character to the encoded string
+            encoded_string += str(count) + input_string[i]
+            count = 1
+
+    return encoded_string
+
+# Example usage
+original_string = 'AAABBBCCDAA'
+encoded_string = run_length_encode(original_string)
+print(encoded_string)  # Output: "3A3B2C1D2A"
+
+***************************************************************************************************************************************************************************************************
+
+
+// jAVA example: //
+
+public class RunLengthEncoding {
+    public static String runLengthEncode(String input) {
+        StringBuilder encoded = new StringBuilder();
+        int count = 1;
+
+        for (int i = 0; i < input.length(); i++) {
+            if (i < input.length() - 1 && input.charAt(i) == input.charAt(i + 1)) {
+                count++;
+            } else {
+                encoded.append(count).append(input.charAt(i));
+                count = 1;
+            }
+        }
+
+        return encoded.toString();
+    }
+
+    public static void main(String[] args) {
+        String originalString = "AAABBBCCDAA";
+        String encodedString = runLengthEncode(originalString);
+        System.out.println(encodedString); // Output: "3A3B2C1D2A"
+    }
+}
