@@ -1,0 +1,196 @@
+// Miller Rabin //
+
+Is the number (probably) a prime number?  The Miller-Rabin primality test is an algorithm used to determine if a given number n is a probable prime or definitely composite. It operates on the 
+principle of checking conditions derived from number theory involving modular arithmetic and properties of prime numbers. The algorithm repeatedly tests whether n satisfies specific conditions 
+based on randomly chosen integers, known as witnesses, to probabilistically determine its primality. By iterating through these tests and applying modular exponentiation efficiently, the 
+Miller-Rabin test provides a reliable means to identify primes, though not with absolute certainty as in deterministic tests like the AKS primality test for all numbers.
+
+
+// JAVASCRIPT example: //
+
+// Function to perform modular exponentiation
+function modularExponentiation(base, exponent, modulus) {
+    if (modulus === 1) return 0;
+    let result = 1;
+    base = base % modulus;
+    while (exponent > 0) {
+        if (exponent % 2 === 1) // If exponent is odd, multiply base with result
+            result = (result * base) % modulus;
+        exponent = exponent >> 1; // Divide exponent by 2
+        base = (base * base) % modulus; // Square the base
+    }
+    return result;
+}
+
+// Miller-Rabin primality test function
+function millerRabinTest(n, d) {
+    // Pick a random integer 'a' in the range [2, n-2]
+    let a = 2 + Math.floor(Math.random() * (n - 4));
+    let x = modularExponentiation(a, d, n);
+    if (x === 1 || x === n - 1)
+        return true;
+    while (d !== n - 1) {
+        x = (x * x) % n;
+        d *= 2;
+        if (x === 1) return false;
+        if (x === n - 1) return true;
+    }
+    return false;
+}
+
+// Main function to check if a number is prime using Miller-Rabin test
+function isPrime(n, k) {
+    // Handle small numbers and even numbers
+    if (n <= 1 || n === 4) return false;
+    if (n <= 3) return true;
+
+    // Find d such that d*(2^r) = n-1 for some r >= 1
+    let d = n - 1;
+    while (d % 2 === 0)
+        d /= 2;
+
+    // Perform Miller-Rabin test 'k' times
+    for (let i = 0; i < k; i++)
+        if (!millerRabinTest(n, d))
+            return false;
+    return true;
+}
+
+// Example usage:
+let numberToTest = 31;
+let numberOfTests = 5;
+console.log(`${numberToTest} is prime: ${isPrime(numberToTest, numberOfTests)}`);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import random
+
+# Function to perform modular exponentiation
+def modular_exponentiation(base, exponent, modulus):
+    result = 1
+    base = base % modulus
+    while exponent > 0:
+        if (exponent % 2) == 1:  # If exponent is odd, multiply base with result
+            result = (result * base) % modulus
+        exponent = exponent >> 1  # Divide exponent by 2
+        base = (base * base) % modulus  # Square the base
+    return result
+
+# Function to perform Miller-Rabin primality test
+def miller_rabin_test(n, d):
+    a = 2 + random.randint(1, n - 4)  # Pick a random integer 'a' in the range [2, n-2]
+    x = modular_exponentiation(a, d, n)
+    if x == 1 or x == n - 1:
+        return True
+    while d != n - 1:
+        x = (x * x) % n
+        d *= 2
+        if x == 1:
+            return False
+        if x == n - 1:
+            return True
+    return False
+
+# Function to check if a number is prime using Miller-Rabin test
+def is_prime(n, k=5):
+    if n <= 1 or n == 4:
+        return False
+    if n <= 3:
+        return True
+    
+    # Find d such that d*(2^r) = n-1 for some r >= 1
+    d = n - 1
+    while d % 2 == 0:
+        d //= 2
+    
+    # Perform Miller-Rabin test 'k' times
+    for _ in range(k):
+        if not miller_rabin_test(n, d):
+            return False
+    return True
+
+# Example usage:
+number_to_test = 31
+number_of_tests = 5
+print(f"{number_to_test} is prime: {is_prime(number_to_test, number_of_tests)}")
+
+
+**************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.math.BigInteger;
+import java.util.Random;
+
+public class MillerRabinPrimalityTest {
+
+    // Function to perform modular exponentiation
+    public static BigInteger modularExponentiation(BigInteger base, BigInteger exponent, BigInteger modulus) {
+        BigInteger result = BigInteger.ONE;
+        base = base.mod(modulus);
+        while (exponent.compareTo(BigInteger.ZERO) > 0) {
+            if (exponent.testBit(0)) { // If exponent is odd
+                result = result.multiply(base).mod(modulus);
+            }
+            base = base.multiply(base).mod(modulus); // Square the base
+            exponent = exponent.shiftRight(1); // Divide exponent by 2
+        }
+        return result;
+    }
+
+    // Function to perform Miller-Rabin primality test
+    public static boolean millerRabinTest(BigInteger n, int k) {
+        if (n.compareTo(BigInteger.ONE) <= 0 || n.equals(BigInteger.valueOf(4))) {
+            return false;
+        }
+        if (n.compareTo(BigInteger.valueOf(3)) <= 0) {
+            return true;
+        }
+
+        BigInteger d = n.subtract(BigInteger.ONE);
+        int r = 0;
+        while (d.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)) {
+            d = d.divide(BigInteger.valueOf(2));
+            r++;
+        }
+
+        Random random = new Random();
+        for (int i = 0; i < k; i++) {
+            BigInteger a = BigInteger.valueOf(2 + random.nextInt(n.intValue() - 4));
+            BigInteger x = modularExponentiation(a, d, n);
+            if (x.equals(BigInteger.ONE) || x.equals(n.subtract(BigInteger.ONE))) {
+                continue;
+            }
+            boolean isProbablePrime = false;
+            for (int j = 0; j < r - 1; j++) {
+                x = x.multiply(x).mod(n);
+                if (x.equals(BigInteger.ONE)) {
+                    return false;
+                }
+                if (x.equals(n.subtract(BigInteger.ONE))) {
+                    isProbablePrime = true;
+                    break;
+                }
+            }
+            if (!isProbablePrime) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Function to check if a number is prime using Miller-Rabin test
+    public static boolean isPrime(BigInteger n, int k) {
+        return millerRabinTest(n, k);
+    }
+
+    // Example usage
+    public static void main(String[] args) {
+        BigInteger numberToTest = new BigInteger("31");
+        int numberOfTests = 5;
+        System.out.println(numberToTest + " is prime: " + isPrime(numberToTest, numberOfTests));
+    }
+}
