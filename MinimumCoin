@@ -1,0 +1,104 @@
+// Minimum Coin //
+
+A showcase for dynamic programming.  The Minimum Coin Change algorithm is a dynamic programming approach used to find the minimum number of coins required to make a specific amount of change. 
+It works by building a solution incrementally, starting from smaller subproblems and gradually solving larger ones. At each step, the algorithm considers whether including a new coin would reduce 
+the number of coins needed to make up the amount. By iterating through all possible coin denominations for each subproblem, it constructs an optimal solution efficiently. This method ensures that 
+the minimum number of coins needed to achieve the target amount is computed effectively, making it a fundamental tool for problems involving coin change optimization.
+
+//  JAVASCRIPT example: //
+
+function minCoins(coins, amount) {
+    // Create an array to store minimum coins needed for each amount from 0 to amount
+    let dp = new Array(amount + 1).fill(Number.MAX_SAFE_INTEGER);
+    
+    // Base case: 0 coins needed to make amount 0
+    dp[0] = 0;
+    
+    // Compute minimum coins needed for each amount from 1 to amount
+    for (let i = 1; i <= amount; i++) {
+        // Iterate through each coin denomination
+        for (let coin of coins) {
+            // Check if using this coin reduces the number of coins needed
+            if (i >= coin) {
+                dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+            }
+        }
+    }
+    
+    // dp[amount] now contains the minimum number of coins needed to make 'amount'
+    return dp[amount];
+}
+
+// Example usage:
+let coins = [1, 2, 5];
+let amount = 11;
+console.log(`Minimum coins needed for amount ${amount}:`, minCoins(coins, amount)); // Output: 3 (coins: [5, 5, 1])
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def min_coins(coins, amount):
+    # Create an array to store minimum coins needed for each amount from 0 to amount
+    dp = [float('inf')] * (amount + 1)
+    
+    # Base case: 0 coins needed to make amount 0
+    dp[0] = 0
+    
+    # Compute minimum coins needed for each amount from 1 to amount
+    for i in range(1, amount + 1):
+        # Iterate through each coin denomination
+        for coin in coins:
+            # Check if using this coin reduces the number of coins needed
+            if i >= coin:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    
+    # dp[amount] now contains the minimum number of coins needed to make 'amount'
+    return dp[amount]
+
+# Example usage:
+coins = [1, 2, 5]
+amount = 11
+print(f"Minimum coins needed for amount {amount}: {min_coins(coins, amount)}")  # Output: 3 (coins: [5, 5, 1])
+
+
+***************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.Arrays;
+
+public class MinimumCoinChange {
+
+    public static int minCoins(int[] coins, int amount) {
+        // Create an array to store minimum coins needed for each amount from 0 to amount
+        int[] dp = new int[amount + 1];
+        
+        // Initialize all values in dp array to infinity (representing unreachable state)
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        
+        // Base case: 0 coins needed to make amount 0
+        dp[0] = 0;
+        
+        // Compute minimum coins needed for each amount from 1 to amount
+        for (int i = 1; i <= amount; i++) {
+            // Iterate through each coin denomination
+            for (int coin : coins) {
+                // Check if using this coin reduces the number of coins needed
+                if (i >= coin && dp[i - coin] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+        
+        // dp[amount] now contains the minimum number of coins needed to make 'amount'
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
+    }
+
+    public static void main(String[] args) {
+        int[] coins = {1, 2, 5};
+        int amount = 11;
+        System.out.println("Minimum coins needed for amount " + amount + ": " + minCoins(coins, amount)); // Output: 3 (coins: [5, 5, 1])
+    }
+}
