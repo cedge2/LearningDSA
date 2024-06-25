@@ -1,0 +1,250 @@
+// Convex Hull - Quickhull // 
+
+A convex hull algorithm is used in computational geometry to find the smallest convex polygon that encloses a set of points in a plane. It is akin to wrapping a rubber band around the outermost 
+points. There are several algorithms to compute the convex hull, this one is called Quickhull.
+
+// JAVASCRIPT example: //
+
+// Function to find the side of point p from line a-b
+function findSide(a, b, p) {
+    const val = (b.y - a.y) * (p.x - a.x) - (b.x - a.x) * (p.y - a.y);
+    if (val > 0) return 1;  // point p is on the left side
+    if (val < 0) return -1; // point p is on the right side
+    return 0;               // point p is on the line
+}
+
+// Function to calculate the distance of point p from line a-b
+function distance(a, b, p) {
+    return Math.abs((b.y - a.y) * (p.x - a.x) - (b.x - a.x) * (p.y - a.y));
+}
+
+// Recursive function to find the convex hull
+function quickHull(points, a, b, side) {
+    let maxDistance = 0;
+    let furthestPoint = null;
+
+    // Find the point with the maximum distance from the line a-b
+    for (const point of points) {
+        const dist = distance(a, b, point);
+        if (findSide(a, b, point) === side && dist > maxDistance) {
+            maxDistance = dist;
+            furthestPoint = point;
+        }
+    }
+
+    // If no point is on the side, add endpoints to hull
+    if (furthestPoint === null) {
+        if (!hull.includes(a)) hull.push(a);
+        if (!hull.includes(b)) hull.push(b);
+        return;
+    }
+
+    // Recur for the two halves divided by the furthest point
+    quickHull(points, a, furthestPoint, -findSide(a, furthestPoint, b));
+    quickHull(points, furthestPoint, b, -findSide(furthestPoint, b, a));
+}
+
+// Main function to compute the convex hull
+function getConvexHull(points) {
+    if (points.length < 3) return points;
+
+    // Find the leftmost and rightmost points
+    let minX = points[0];
+    let maxX = points[0];
+
+    for (const point of points) {
+        if (point.x < minX.x) minX = point;
+        if (point.x > maxX.x) maxX = point;
+    }
+
+    // Apply quickHull on both sides of the line minX-maxX
+    quickHull(points, minX, maxX, 1);
+    quickHull(points, minX, maxX, -1);
+
+    return hull;
+}
+
+// Example usage
+const points = [
+    { x: 0, y: 3 },
+    { x: 2, y: 3 },
+    { x: 1, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 0 },
+    { x: 0, y: 0 },
+    { x: 3, y: 3 }
+];
+
+let hull = [];
+const convexHull = getConvexHull(points);
+console.log(convexHull);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+# Function to find the side of point p from line a-b
+def find_side(a, b, p):
+    val = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+    if val > 0:
+        return 1  # point p is on the left side
+    if val < 0:
+        return -1  # point p is on the right side
+    return 0  # point p is on the line
+
+# Function to calculate the distance of point p from line a-b
+def distance(a, b, p):
+    return abs((b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]))
+
+# Recursive function to find the convex hull
+def quickhull(points, a, b, side, hull):
+    max_distance = 0
+    furthest_point = None
+
+    # Find the point with the maximum distance from the line a-b
+    for point in points:
+        dist = distance(a, b, point)
+        if find_side(a, b, point) == side and dist > max_distance:
+            max_distance = dist
+            furthest_point = point
+
+    # If no point is on the side, add endpoints to hull
+    if furthest_point is None:
+        if a not in hull:
+            hull.append(a)
+        if b not in hull:
+            hull.append(b)
+        return
+
+    # Recur for the two halves divided by the furthest point
+    quickhull(points, a, furthest_point, -find_side(a, furthest_point, b), hull)
+    quickhull(points, furthest_point, b, -find_side(furthest_point, b, a), hull)
+
+# Main function to compute the convex hull
+def get_convex_hull(points):
+    if len(points) < 3:
+        return points
+
+    hull = []
+    
+    # Find the leftmost and rightmost points
+    min_x = min(points, key=lambda p: p[0])
+    max_x = max(points, key=lambda p: p[0])
+
+    # Apply quickhull on both sides of the line min_x-max_x
+    quickhull(points, min_x, max_x, 1, hull)
+    quickhull(points, min_x, max_x, -1, hull)
+
+    return hull
+
+# Example usage
+points = [
+    (0, 3), (2, 3), (1, 1), (2, 1), (3, 0), (0, 0), (3, 3)
+]
+
+convex_hull = get_convex_hull(points)
+print(convex_hull)
+
+
+**************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.ArrayList;
+import java.util.List;
+
+class Point {
+    int x, y;
+    
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+public class QuickHull {
+    
+    // Function to find the side of point p from line a-b
+    public static int findSide(Point a, Point b, Point p) {
+        int val = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+        if (val > 0)
+            return 1; // point p is on the left side
+        if (val < 0)
+            return -1; // point p is on the right side
+        return 0; // point p is on the line
+    }
+    
+    // Function to calculate the distance of point p from line a-b
+    public static int distance(Point a, Point b, Point p) {
+        return Math.abs((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x));
+    }
+    
+    // Recursive function to find the convex hull
+    public static void quickHull(List<Point> points, Point a, Point b, int side, List<Point> hull) {
+        int maxDistance = 0;
+        Point furthestPoint = null;
+        
+        // Find the point with the maximum distance from the line a-b
+        for (Point point : points) {
+            int dist = distance(a, b, point);
+            if (findSide(a, b, point) == side && dist > maxDistance) {
+                maxDistance = dist;
+                furthestPoint = point;
+            }
+        }
+        
+        // If no point is on the side, add endpoints to hull
+        if (furthestPoint == null) {
+            if (!hull.contains(a))
+                hull.add(a);
+            if (!hull.contains(b))
+                hull.add(b);
+            return;
+        }
+        
+        // Recur for the two halves divided by the furthest point
+        quickHull(points, a, furthestPoint, -findSide(a, furthestPoint, b), hull);
+        quickHull(points, furthestPoint, b, -findSide(furthestPoint, b, a), hull);
+    }
+    
+    // Main function to compute the convex hull
+    public static List<Point> getConvexHull(List<Point> points) {
+        List<Point> hull = new ArrayList<>();
+        if (points.size() < 3)
+            return points;
+        
+        // Find the leftmost and rightmost points
+        Point minX = points.get(0);
+        Point maxX = points.get(0);
+        for (Point point : points) {
+            if (point.x < minX.x)
+                minX = point;
+            if (point.x > maxX.x)
+                maxX = point;
+        }
+        
+        // Apply quickHull on both sides of the line minX-maxX
+        quickHull(points, minX, maxX, 1, hull);
+        quickHull(points, minX, maxX, -1, hull);
+        
+        return hull;
+    }
+    
+    // Example usage
+    public static void main(String[] args) {
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(0, 3));
+        points.add(new Point(2, 3));
+        points.add(new Point(1, 1));
+        points.add(new Point(2, 1));
+        points.add(new Point(3, 0));
+        points.add(new Point(0, 0));
+        points.add(new Point(3, 3));
+        
+        List<Point> convexHull = getConvexHull(points);
+        for (Point point : convexHull) {
+            System.out.println("(" + point.x + ", " + point.y + ")");
+        }
+    }
+}
