@@ -1,0 +1,374 @@
+// Strassen Multiplication Matrix //
+
+
+Strassen's matrix multiplication is an algorithm that reduces the number of basic operations required to multiply two matrices compared to the standard method. It achieves this by breaking down 
+the matrix multiplication into a series of smaller, recursive multiplications, combined with additions and subtractions.  The key idea is to exploit the properties of matrix algebra to reduce the 
+asymptotic complexity from O(n^3) in the standard method to approxamately O(n^2.81) making it more efficient for large matrices where n is sufficiently large. This efficiency gain comes from 
+reducing the number of multiplicative operations needed by strategically combining matrix elements in a recursive manner.
+
+
+// JAVASCRIPT example: //
+
+// Function to perform standard matrix multiplication
+function standardMatrixMultiply(A, B) {
+    let n = A.length;
+    let C = new Array(n).fill(0).map(() => new Array(n).fill(0));
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            for (let k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    return C;
+}
+
+// Function to add matrices
+function matrixAddition(A, B) {
+    let n = A.length;
+    let C = new Array(n).fill(0).map(() => new Array(n).fill(0));
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            C[i][j] = A[i][j] + B[i][j];
+        }
+    }
+
+    return C;
+}
+
+// Function to subtract matrices
+function matrixSubtraction(A, B) {
+    let n = A.length;
+    let C = new Array(n).fill(0).map(() => new Array(n).fill(0));
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            C[i][j] = A[i][j] - B[i][j];
+        }
+    }
+
+    return C;
+}
+
+// Function to divide matrix into four submatrices
+function divideMatrix(matrix) {
+    let n = matrix.length;
+    let mid = n / 2;
+
+    let A11 = [], A12 = [], A21 = [], A22 = [];
+    let B11 = [], B12 = [], B21 = [], B22 = [];
+
+    for (let i = 0; i < mid; i++) {
+        A11.push(matrix[i].slice(0, mid));
+        A12.push(matrix[i].slice(mid));
+        A21.push(matrix[i + mid].slice(0, mid));
+        A22.push(matrix[i + mid].slice(mid));
+
+        B11.push(matrix[i].slice(0, mid));
+        B12.push(matrix[i].slice(mid));
+        B21.push(matrix[i + mid].slice(0, mid));
+        B22.push(matrix[i + mid].slice(mid));
+    }
+
+    return { A11, A12, A21, A22, B11, B12, B21, B22 };
+}
+
+// Strassen's matrix multiplication algorithm
+function strassenMatrixMultiply(A, B) {
+    let n = A.length;
+
+    // Base case: Use standard matrix multiplication for small matrices
+    if (n <= 2) {
+        return standardMatrixMultiply(A, B);
+    }
+
+    // Divide matrices into submatrices
+    let { A11, A12, A21, A22, B11, B12, B21, B22 } = divideMatrix(A);
+
+    // Recursive steps
+    let P1 = strassenMatrixMultiply(A11, matrixSubtraction(B12, B22));
+    let P2 = strassenMatrixMultiply(matrixAddition(A11, A12), B22);
+    let P3 = strassenMatrixMultiply(matrixAddition(A21, A22), B11);
+    let P4 = strassenMatrixMultiply(A22, matrixSubtraction(B21, B11));
+    let P5 = strassenMatrixMultiply(matrixAddition(A11, A22), matrixAddition(B11, B22));
+    let P6 = strassenMatrixMultiply(matrixSubtraction(A12, A22), matrixAddition(B21, B22));
+    let P7 = strassenMatrixMultiply(matrixSubtraction(A11, A21), matrixAddition(B11, B12));
+
+    // Calculate result submatrices
+    let C11 = matrixAddition(matrixSubtraction(matrixAddition(P5, P4), P2), P6);
+    let C12 = matrixAddition(P1, P2);
+    let C21 = matrixAddition(P3, P4);
+    let C22 = matrixSubtraction(matrixSubtraction(matrixAddition(P5, P1), P3), P7);
+
+    // Combine result submatrices into the resulting matrix
+    let C = [];
+    for (let i = 0; i < n / 2; i++) {
+        C.push(C11[i].concat(C12[i]));
+    }
+    for (let i = 0; i < n / 2; i++) {
+        C.push(C21[i].concat(C22[i]));
+    }
+
+    return C;
+}
+
+// Example usage:
+let A = [[1, 2], [3, 4]];
+let B = [[5, 6], [7, 8]];
+
+console.log("Matrix A:", A);
+console.log("Matrix B:", B);
+
+let result = strassenMatrixMultiply(A, B);
+console.log("Result of Strassen's Matrix Multiplication:");
+console.log(result);
+
+
+**************************************************************************************************************************************************************************************************
+
+
+// PYTHON example: //
+
+import numpy as np
+
+# Function to perform standard matrix multiplication
+def standard_matrix_multiply(A, B):
+    n = len(A)
+    C = [[0] * n for _ in range(n)]
+    
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                C[i][j] += A[i][k] * B[k][j]
+    
+    return C
+
+# Function to add two matrices
+def matrix_addition(A, B):
+    n = len(A)
+    C = [[0] * n for _ in range(n)]
+    
+    for i in range(n):
+        for j in range(n):
+            C[i][j] = A[i][j] + B[i][j]
+    
+    return C
+
+# Function to subtract two matrices
+def matrix_subtraction(A, B):
+    n = len(A)
+    C = [[0] * n for _ in range(n)]
+    
+    for i in range(n):
+        for j in range(n):
+            C[i][j] = A[i][j] - B[i][j]
+    
+    return C
+
+# Function to divide matrix into four submatrices
+def divide_matrix(matrix):
+    n = len(matrix)
+    mid = n // 2
+    
+    A11 = [row[:mid] for row in matrix[:mid]]
+    A12 = [row[mid:] for row in matrix[:mid]]
+    A21 = [row[:mid] for row in matrix[mid:]]
+    A22 = [row[mid:] for row in matrix[mid:]]
+    
+    return A11, A12, A21, A22
+
+# Strassen's matrix multiplication algorithm
+def strassen_matrix_multiply(A, B):
+    n = len(A)
+    
+    # Base case: Use standard matrix multiplication for small matrices
+    if n <= 2:
+        return standard_matrix_multiply(A, B)
+    
+    # Divide matrices into submatrices
+    A11, A12, A21, A22 = divide_matrix(A)
+    B11, B12, B21, B22 = divide_matrix(B)
+    
+    # Recursive steps
+    P1 = strassen_matrix_multiply(A11, matrix_subtraction(B12, B22))
+    P2 = strassen_matrix_multiply(matrix_addition(A11, A12), B22)
+    P3 = strassen_matrix_multiply(matrix_addition(A21, A22), B11)
+    P4 = strassen_matrix_multiply(A22, matrix_subtraction(B21, B11))
+    P5 = strassen_matrix_multiply(matrix_addition(A11, A22), matrix_addition(B11, B22))
+    P6 = strassen_matrix_multiply(matrix_subtraction(A12, A22), matrix_addition(B21, B22))
+    P7 = strassen_matrix_multiply(matrix_subtraction(A11, A21), matrix_addition(B11, B12))
+    
+    # Calculate result submatrices
+    C11 = matrix_subtraction(matrix_addition(matrix_addition(P5, P4), P2), P6)
+    C12 = matrix_addition(P1, P2)
+    C21 = matrix_addition(P3, P4)
+    C22 = matrix_subtraction(matrix_subtraction(matrix_addition(P5, P1), P3), P7)
+    
+    # Combine result submatrices into the resulting matrix
+    C = [[0] * n for _ in range(n)]
+    for i in range(n//2):
+        for j in range(n//2):
+            C[i][j] = C11[i][j]
+            C[i][j + n//2] = C12[i][j]
+            C[i + n//2][j] = C21[i][j]
+            C[i + n//2][j + n//2] = C22[i][j]
+    
+    return C
+
+# Example usage:
+A = [[1, 2], [3, 4]]
+B = [[5, 6], [7, 8]]
+
+print("Matrix A:")
+print(np.array(A))
+print("Matrix B:")
+print(np.array(B))
+
+result = strassen_matrix_multiply(A, B)
+print("Result of Strassen's Matrix Multiplication:")
+print(np.array(result))
+
+
+**************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.Arrays;
+
+public class StrassenMatrixMultiplication {
+
+    // Function to perform standard matrix multiplication
+    public static int[][] standardMatrixMultiply(int[][] A, int[][] B) {
+        int n = A.length;
+        int[][] C = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                for (int k = 0; k < n; k++) {
+                    C[i][j] += A[i][k] * B[k][j];
+                }
+            }
+        }
+
+        return C;
+    }
+
+    // Function to add two matrices
+    public static int[][] matrixAddition(int[][] A, int[][] B) {
+        int n = A.length;
+        int[][] C = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                C[i][j] = A[i][j] + B[i][j];
+            }
+        }
+
+        return C;
+    }
+
+    // Function to subtract two matrices
+    public static int[][] matrixSubtraction(int[][] A, int[][] B) {
+        int n = A.length;
+        int[][] C = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                C[i][j] = A[i][j] - B[i][j];
+            }
+        }
+
+        return C;
+    }
+
+    // Function to divide matrix into four submatrices
+    public static void divideMatrix(int[][] matrix, int[][] A11, int[][] A12, int[][] A21, int[][] A22) {
+        int n = matrix.length;
+        int mid = n / 2;
+
+        for (int i = 0; i < mid; i++) {
+            System.arraycopy(matrix[i], 0, A11[i], 0, mid);
+            System.arraycopy(matrix[i], mid, A12[i], 0, mid);
+            System.arraycopy(matrix[i + mid], 0, A21[i], 0, mid);
+            System.arraycopy(matrix[i + mid], mid, A22[i], 0, mid);
+        }
+    }
+
+    // Strassen's matrix multiplication algorithm
+    public static int[][] strassenMatrixMultiply(int[][] A, int[][] B) {
+        int n = A.length;
+
+        // Base case: Use standard matrix multiplication for small matrices
+        if (n <= 2) {
+            return standardMatrixMultiply(A, B);
+        }
+
+        // Create submatrices
+        int[][] A11 = new int[n/2][n/2];
+        int[][] A12 = new int[n/2][n/2];
+        int[][] A21 = new int[n/2][n/2];
+        int[][] A22 = new int[n/2][n/2];
+        int[][] B11 = new int[n/2][n/2];
+        int[][] B12 = new int[n/2][n/2];
+        int[][] B21 = new int[n/2][n/2];
+        int[][] B22 = new int[n/2][n/2];
+
+        divideMatrix(A, A11, A12, A21, A22);
+        divideMatrix(B, B11, B12, B21, B22);
+
+        // Recursive steps
+        int[][] P1 = strassenMatrixMultiply(A11, matrixSubtraction(B12, B22));
+        int[][] P2 = strassenMatrixMultiply(matrixAddition(A11, A12), B22);
+        int[][] P3 = strassenMatrixMultiply(matrixAddition(A21, A22), B11);
+        int[][] P4 = strassenMatrixMultiply(A22, matrixSubtraction(B21, B11));
+        int[][] P5 = strassenMatrixMultiply(matrixAddition(A11, A22), matrixAddition(B11, B22));
+        int[][] P6 = strassenMatrixMultiply(matrixSubtraction(A12, A22), matrixAddition(B21, B22));
+        int[][] P7 = strassenMatrixMultiply(matrixSubtraction(A11, A21), matrixAddition(B11, B12));
+
+        // Calculate result submatrices
+        int[][] C11 = matrixSubtraction(matrixAddition(matrixAddition(P5, P4), P2), P6);
+        int[][] C12 = matrixAddition(P1, P2);
+        int[][] C21 = matrixAddition(P3, P4);
+        int[][] C22 = matrixSubtraction(matrixSubtraction(matrixAddition(P5, P1), P3), P7);
+
+        // Combine result submatrices into the resulting matrix
+        int[][] C = new int[n][n];
+        for (int i = 0; i < n/2; i++) {
+            for (int j = 0; j < n/2; j++) {
+                C[i][j] = C11[i][j];
+                C[i][j + n/2] = C12[i][j];
+                C[i + n/2][j] = C21[i][j];
+                C[i + n/2][j + n/2] = C22[i][j];
+            }
+        }
+
+        return C;
+    }
+
+    // Utility function to print a matrix
+    public static void printMatrix(int[][] matrix) {
+        for (int[] row : matrix) {
+            System.out.println(Arrays.toString(row));
+        }
+    }
+
+    // Main method to test the algorithm
+    public static void main(String[] args) {
+        int[][] A = { {1, 2}, {3, 4} };
+        int[][] B = { {5, 6}, {7, 8} };
+
+        System.out.println("Matrix A:");
+        printMatrix(A);
+        System.out.println("Matrix B:");
+        printMatrix(B);
+
+        int[][] result = strassenMatrixMultiply(A, B);
+
+        System.out.println("Result of Strassen's Matrix Multiplication:");
+        printMatrix(result);
+    }
+}
