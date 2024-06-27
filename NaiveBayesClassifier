@@ -1,0 +1,225 @@
+// Naive Bayes Classifier //
+
+The Naive Bayes Classifier is a probabilistic machine learning algorithm based on Bayes' theorem. It assumes that the presence of a particular feature in a class is independent of other features. 
+This assumption simplifies the calculation of probabilities and makes the algorithm efficient and easy to implement. Naive Bayes is commonly used for classification tasks, where it predicts the 
+class of an instance by calculating the conditional probability of each class given the input features, and selecting the class with the highest probability. Despite its simplicity, Naive Bayes 
+often performs well in practice, especially with large datasets and text classification tasks.
+
+
+// JAVASCRIPT example: //
+
+class NaiveBayesClassifier {
+  constructor() {
+    this.classes = {}; // To store class probabilities
+    this.classFeatures = {}; // To store feature counts per class
+    this.featureCounts = {}; // To store total counts of features
+  }
+
+  // Train the classifier with labeled data
+  train(data) {
+    data.forEach((instance) => {
+      const { features, label } = instance;
+      if (!(label in this.classes)) {
+        this.classes[label] = 0;
+        this.classFeatures[label] = {};
+      }
+      this.classes[label]++;
+      
+      features.forEach((feature) => {
+        if (!(feature in this.classFeatures[label])) {
+          this.classFeatures[label][feature] = 0;
+        }
+        if (!(feature in this.featureCounts)) {
+          this.featureCounts[feature] = 0;
+        }
+        this.classFeatures[label][feature]++;
+        this.featureCounts[feature]++;
+      });
+    });
+  }
+
+  // Predict the class label for a new instance
+  predict(features) {
+    let maxProbability = -1;
+    let bestClass = null;
+
+    Object.keys(this.classes).forEach((label) => {
+      let probability = Math.log(this.classes[label] / Object.values(this.classes).reduce((a, b) => a + b, 0));
+
+      features.forEach((feature) => {
+        const count = this.classFeatures[label][feature] || 0;
+        probability += Math.log((count + 1) / (this.featureCounts[feature] + 1));
+      });
+
+      if (probability > maxProbability) {
+        maxProbability = probability;
+        bestClass = label;
+      }
+    });
+
+    return bestClass;
+  }
+}
+
+// Example usage:
+const classifier = new NaiveBayesClassifier();
+
+// Training data
+const trainingData = [
+  { features: ['good', 'awesome', 'amazing'], label: 'positive' },
+  { features: ['bad', 'poor', 'terrible'], label: 'negative' },
+  { features: ['excellent', 'great', 'wonderful'], label: 'positive' },
+  { features: ['awful', 'horrible', 'worst'], label: 'negative' },
+];
+
+classifier.train(trainingData);
+
+// Test data
+const testData = ['awesome', 'worst', 'amazing'];
+
+const predictedClass = classifier.predict(testData);
+console.log(`Predicted class: ${predictedClass}`);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import math
+from collections import defaultdict
+
+class NaiveBayesClassifier:
+    def __init__(self):
+        self.class_counts = defaultdict(int)
+        self.class_feature_counts = defaultdict(lambda: defaultdict(int))
+        self.feature_counts = defaultdict(int)
+        self.total_examples = 0
+
+    def train(self, data):
+        for features, label in data:
+            self.class_counts[label] += 1
+            for feature in features:
+                self.class_feature_counts[label][feature] += 1
+                self.feature_counts[feature] += 1
+            self.total_examples += 1
+
+    def predict(self, features):
+        best_label = None
+        best_score = float('-inf')
+
+        for label in self.class_counts:
+            score = math.log(self.class_counts[label] / self.total_examples)
+            for feature in features:
+                score += math.log((self.class_feature_counts[label][feature] + 1) /
+                                  (self.feature_counts[feature] + len(self.feature_counts)))
+
+            if score > best_score:
+                best_score = score
+                best_label = label
+
+        return best_label
+
+# Example usage:
+classifier = NaiveBayesClassifier()
+
+# Training data
+training_data = [
+    (['good', 'awesome', 'amazing'], 'positive'),
+    (['bad', 'poor', 'terrible'], 'negative'),
+    (['excellent', 'great', 'wonderful'], 'positive'),
+    (['awful', 'horrible', 'worst'], 'negative'),
+]
+
+classifier.train(training_data)
+
+# Test data
+test_data = ['awesome', 'worst', 'amazing']
+
+predicted_class = classifier.predict(test_data)
+print(f'Predicted class: {predicted_class}')
+
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.*;
+
+public class NaiveBayesClassifier {
+    private Map<String, Integer> classCounts;
+    private Map<String, Map<String, Integer>> classFeatureCounts;
+    private Map<String, Integer> featureCounts;
+    private int totalExamples;
+
+    public NaiveBayesClassifier() {
+        classCounts = new HashMap<>();
+        classFeatureCounts = new HashMap<>();
+        featureCounts = new HashMap<>();
+        totalExamples = 0;
+    }
+
+    public void train(List<Map<String, String>> data) {
+        for (Map<String, String> instance : data) {
+            String label = instance.get("label");
+            List<String> features = Arrays.asList(instance.get("features").split("\\s+"));
+
+            classCounts.put(label, classCounts.getOrDefault(label, 0) + 1);
+            if (!classFeatureCounts.containsKey(label)) {
+                classFeatureCounts.put(label, new HashMap<>());
+            }
+
+            for (String feature : features) {
+                if (!classFeatureCounts.get(label).containsKey(feature)) {
+                    classFeatureCounts.get(label).put(feature, 0);
+                }
+                classFeatureCounts.get(label).put(feature, classFeatureCounts.get(label).get(feature) + 1);
+
+                featureCounts.put(feature, featureCounts.getOrDefault(feature, 0) + 1);
+            }
+
+            totalExamples++;
+        }
+    }
+
+    public String predict(List<String> features) {
+        double bestScore = Double.NEGATIVE_INFINITY;
+        String bestLabel = null;
+
+        for (String label : classCounts.keySet()) {
+            double score = Math.log((double) classCounts.get(label) / totalExamples);
+
+            for (String feature : features) {
+                int count = classFeatureCounts.get(label).getOrDefault(feature, 0);
+                score += Math.log((count + 1.0) / (featureCounts.size() + featureCounts.getOrDefault(feature, 0)));
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestLabel = label;
+            }
+        }
+
+        return bestLabel;
+    }
+
+    public static void main(String[] args) {
+        NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+
+        // Training data
+        List<Map<String, String>> trainingData = new ArrayList<>();
+        trainingData.add(Map.of("features", "good awesome amazing", "label", "positive"));
+        trainingData.add(Map.of("features", "bad poor terrible", "label", "negative"));
+        trainingData.add(Map.of("features", "excellent great wonderful", "label", "positive"));
+        trainingData.add(Map.of("features", "awful horrible worst", "label", "negative"));
+
+        classifier.train(trainingData);
+
+        // Test data
+        List<String> testData = Arrays.asList("awesome", "worst", "amazing");
+
+        String predictedClass = classifier.predict(testData);
+        System.out.println("Predicted class: " + predictedClass);
+    }
+}
