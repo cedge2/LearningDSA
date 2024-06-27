@@ -1,0 +1,267 @@
+// Simulated Annealing //
+
+Simulated annealing is a probabilistic optimization technique inspired by the annealing process in metallurgy. It's used to find near-optimal solutions to optimization problems, especially in 
+situations where finding the exact optimal solution is impractical. The method starts with an initial solution and iteratively explores neighboring solutions, accepting changes that improve the 
+objective function (like minimizing cost or maximizing efficiency) and occasionally accepting worse solutions to escape local optima. This acceptance of worse solutions decreases over time, 
+analogous to cooling in metallurgy, leading to convergence towards a good solution.
+
+// JAVASCRIPT example: //
+
+// Example of Simulated Annealing for TSP in JavaScript
+
+// Function to calculate total distance of a tour
+function calculateTourDistance(tour, distances) {
+    let totalDistance = 0;
+    for (let i = 0; i < tour.length - 1; i++) {
+        let cityA = tour[i];
+        let cityB = tour[i + 1];
+        totalDistance += distances[cityA][cityB];
+    }
+    // Return to the starting city
+    totalDistance += distances[tour[tour.length - 1]][tour[0]];
+    return totalDistance;
+}
+
+// Function to generate a random initial tour
+function generateRandomTour(numCities) {
+    let tour = [];
+    for (let i = 0; i < numCities; i++) {
+        tour.push(i);
+    }
+    // Randomly shuffle the tour (Fisher-Yates shuffle)
+    for (let i = tour.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tour[i], tour[j]] = [tour[j], tour[i]];
+    }
+    return tour;
+}
+
+// Simulated Annealing function to find a good solution
+function simulatedAnnealing(distances, initialTemperature, coolingRate, numIterations) {
+    const numCities = distances.length;
+    let currentTour = generateRandomTour(numCities);
+    let currentDistance = calculateTourDistance(currentTour, distances);
+
+    let bestTour = currentTour.slice();
+    let bestDistance = currentDistance;
+
+    let temperature = initialTemperature;
+
+    for (let iter = 0; iter < numIterations; iter++) {
+        // Generate a new neighboring tour by swapping two cities
+        let newTour = currentTour.slice();
+        let cityA = Math.floor(Math.random() * numCities);
+        let cityB = Math.floor(Math.random() * numCities);
+        [newTour[cityA], newTour[cityB]] = [newTour[cityB], newTour[cityA]];
+
+        let newDistance = calculateTourDistance(newTour, distances);
+
+        // Decide whether to accept the new tour
+        if (newDistance < currentDistance || Math.random() < Math.exp((currentDistance - newDistance) / temperature)) {
+            currentTour = newTour.slice();
+            currentDistance = newDistance;
+        }
+
+        // Update the best tour found so far
+        if (currentDistance < bestDistance) {
+            bestTour = currentTour.slice();
+            bestDistance = currentDistance;
+        }
+
+        // Cool down the temperature
+        temperature *= coolingRate;
+    }
+
+    return { bestTour, bestDistance };
+}
+
+// Example usage:
+const numCities = 5;
+const distances = [
+    [0, 2, 9, 10, 6],
+    [2, 0, 4, 5, 8],
+    [9, 4, 0, 2, 3],
+    [10, 5, 2, 0, 7],
+    [6, 8, 3, 7, 0]
+];
+const initialTemperature = 1000;
+const coolingRate = 0.99;
+const numIterations = 10000;
+
+const { bestTour, bestDistance } = simulatedAnnealing(distances, initialTemperature, coolingRate, numIterations);
+console.log("Best Tour:", bestTour);
+console.log("Best Distance:", bestDistance);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import math
+import random
+
+# Function to calculate total distance of a tour
+def calculate_tour_distance(tour, distances):
+    total_distance = 0
+    num_cities = len(tour)
+    for i in range(num_cities):
+        total_distance += distances[tour[i]][tour[(i + 1) % num_cities]]
+    return total_distance
+
+# Function to generate a random initial tour
+def generate_random_tour(num_cities):
+    tour = list(range(num_cities))
+    random.shuffle(tour)
+    return tour
+
+# Simulated Annealing function to find a good solution
+def simulated_annealing(distances, initial_temperature, cooling_rate, num_iterations):
+    num_cities = len(distances)
+    current_tour = generate_random_tour(num_cities)
+    current_distance = calculate_tour_distance(current_tour, distances)
+
+    best_tour = current_tour[:]
+    best_distance = current_distance
+
+    temperature = initial_temperature
+
+    for _ in range(num_iterations):
+        # Generate a new neighboring tour by swapping two cities
+        new_tour = current_tour[:]
+        cityA = random.randint(0, num_cities - 1)
+        cityB = random.randint(0, num_cities - 1)
+        new_tour[cityA], new_tour[cityB] = new_tour[cityB], new_tour[cityA]
+
+        new_distance = calculate_tour_distance(new_tour, distances)
+
+        # Decide whether to accept the new tour
+        if new_distance < current_distance or random.random() < math.exp((current_distance - new_distance) / temperature):
+            current_tour = new_tour[:]
+            current_distance = new_distance
+
+        # Update the best tour found so far
+        if current_distance < best_distance:
+            best_tour = current_tour[:]
+            best_distance = current_distance
+
+        # Cool down the temperature
+        temperature *= cooling_rate
+
+    return best_tour, best_distance
+
+# Example usage:
+if __name__ == "__main__":
+    num_cities = 5
+    distances = [
+        [0, 2, 9, 10, 6],
+        [2, 0, 4, 5, 8],
+        [9, 4, 0, 2, 3],
+        [10, 5, 2, 0, 7],
+        [6, 8, 3, 7, 0]
+    ]
+    initial_temperature = 1000
+    cooling_rate = 0.99
+    num_iterations = 10000
+
+    best_tour, best_distance = simulated_annealing(distances, initial_temperature, cooling_rate, num_iterations)
+    print(f"Best Tour: {best_tour}")
+    print(f"Best Distance: {best_distance}")
+
+
+**************************************************************************************************************************************************************************************************
+
+// JAVA example: //
+
+import java.util.Arrays;
+import java.util.Random;
+
+public class SimulatedAnnealingTSP {
+
+    // Function to calculate total distance of a tour
+    public static double calculateTourDistance(int[] tour, double[][] distances) {
+        int numCities = tour.length;
+        double totalDistance = 0;
+        for (int i = 0; i < numCities; i++) {
+            int cityA = tour[i];
+            int cityB = tour[(i + 1) % numCities];
+            totalDistance += distances[cityA][cityB];
+        }
+        return totalDistance;
+    }
+
+    // Function to generate a random initial tour
+    public static int[] generateRandomTour(int numCities) {
+        int[] tour = new int[numCities];
+        for (int i = 0; i < numCities; i++) {
+            tour[i] = i;
+        }
+        Random random = new Random();
+        for (int i = numCities - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int temp = tour[i];
+            tour[i] = tour[j];
+            tour[j] = temp;
+        }
+        return tour;
+    }
+
+    // Simulated Annealing function to find a good solution
+    public static int[] simulatedAnnealing(double[][] distances, double initialTemperature, double coolingRate, int numIterations) {
+        int numCities = distances.length;
+        int[] currentTour = generateRandomTour(numCities);
+        double currentDistance = calculateTourDistance(currentTour, distances);
+
+        int[] bestTour = Arrays.copyOf(currentTour, numCities);
+        double bestDistance = currentDistance;
+
+        double temperature = initialTemperature;
+
+        for (int iter = 0; iter < numIterations; iter++) {
+            // Generate a new neighboring tour by swapping two cities
+            int[] newTour = Arrays.copyOf(currentTour, numCities);
+            Random random = new Random();
+            int cityA = random.nextInt(numCities);
+            int cityB = random.nextInt(numCities);
+            int temp = newTour[cityA];
+            newTour[cityA] = newTour[cityB];
+            newTour[cityB] = temp;
+
+            double newDistance = calculateTourDistance(newTour, distances);
+
+            // Decide whether to accept the new tour
+            if (newDistance < currentDistance || Math.random() < Math.exp((currentDistance - newDistance) / temperature)) {
+                currentTour = Arrays.copyOf(newTour, numCities);
+                currentDistance = newDistance;
+            }
+
+            // Update the best tour found so far
+            if (currentDistance < bestDistance) {
+                bestTour = Arrays.copyOf(currentTour, numCities);
+                bestDistance = currentDistance;
+            }
+
+            // Cool down the temperature
+            temperature *= coolingRate;
+        }
+
+        return bestTour;
+    }
+
+    public static void main(String[] args) {
+        int numCities = 5;
+        double[][] distances = {
+                {0, 2, 9, 10, 6},
+                {2, 0, 4, 5, 8},
+                {9, 4, 0, 2, 3},
+                {10, 5, 2, 0, 7},
+                {6, 8, 3, 7, 0}
+        };
+        double initialTemperature = 1000;
+        double coolingRate = 0.99;
+        int numIterations = 10000;
+
+        int[] bestTour = simulatedAnnealing(distances, initialTemperature, coolingRate, numIterations);
+        System.out.println("Best Tour: " + Arrays.toString(bestTour));
+        System.out.println("Best Distance: " + calculateTourDistance(bestTour, distances));
+    }
+}
