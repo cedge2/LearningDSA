@@ -1,0 +1,204 @@
+// Permutations and Combinations //
+
+Permutations and combinations are fundamental concepts in combinatorics, the branch of mathematics dealing with counting and arrangements. Permutations refer to the different ways in which a 
+set of items can be arranged in order, where the order of the items matters. For example, the permutations of the set {A, B, C} include ABC, ACB, BAC, BCA, CAB, and CBA. Combinations, on the 
+other hand, refer to the selection of items from a set where the order does not matter. For instance, the combinations of the set {A, B, C} taken two at a time are AB, AC, and BC. While 
+permutations focus on the sequence of arrangement, combinations focus on the choice of items without regard to the sequence.
+
+// JAVASCRIPT examples: //
+
+   ** Heap's Algorithm **
+
+function generatePermutations(arr, n = arr.length) {
+    if (n === 1) {
+        console.log(arr);
+        return;
+    }
+
+    for (let i = 0; i < n; i++) {
+        generatePermutations(arr, n - 1);
+
+        if (n % 2 === 0) {
+            [arr[i], arr[n - 1]] = [arr[n - 1], arr[i]];
+        } else {
+            [arr[0], arr[n - 1]] = [arr[n - 1], arr[0]];
+        }
+    }
+}
+
+// Example usage
+let input = ['A', 'B', 'C'];
+generatePermutations(input);
+
+
+  ** Lexicographic Order **
+
+function nextPermutation(arr) {
+    let i = arr.length - 2;
+    while (i >= 0 && arr[i] >= arr[i + 1]) {
+        i--;
+    }
+
+    if (i >= 0) {
+        let j = arr.length - 1;
+        while (arr[j] <= arr[i]) {
+            j--;
+        }
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    arr.reverse();
+    return arr;
+}
+
+// Example usage
+let input = ['A', 'B', 'C'];
+console.log(input);
+while ((input = nextPermutation(input.slice()))) {
+    console.log(input);
+}
+
+
+  ** Iterative Approach **
+
+function generatePermutations(arr) {
+    let result = [];
+    let stack = [[[], arr]];
+
+    while (stack.length > 0) {
+        let [prefix, suffix] = stack.pop();
+
+        if (suffix.length === 0) {
+            result.push(prefix);
+        } else {
+            for (let i = 0; i < suffix.length; i++) {
+                let newPrefix = prefix.concat(suffix[i]);
+                let newSuffix = suffix.slice(0, i).concat(suffix.slice(i + 1));
+                stack.push([newPrefix, newSuffix]);
+            }
+        }
+    }
+
+    return result;
+}
+
+// Example usage
+let input = ['A', 'B', 'C'];
+let permutations = generatePermutations(input);
+console.log(permutations);
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def generate_permutations(arr):
+    result = []
+    stack = [([], arr)]  # stack elements are tuples of (prefix, remaining elements)
+
+    while stack:
+        prefix, suffix = stack.pop()
+
+        if not suffix:
+            result.append(prefix)
+        else:
+            for i in range(len(suffix)):
+                new_prefix = prefix + [suffix[i]]
+                new_suffix = suffix[:i] + suffix[i+1:]
+                stack.append((new_prefix, new_suffix))
+
+    return result
+
+# Example usage
+input_arr = ['A', 'B', 'C']
+permutations = generate_permutations(input_arr)
+print(permutations)
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+public class Permutations {
+
+    public static List<List<Integer>> generatePermutations(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Stack<Pair> stack = new Stack<>();
+        stack.push(new Pair(new ArrayList<>(), nums));
+
+        while (!stack.isEmpty()) {
+            Pair pair = stack.pop();
+            List<Integer> prefix = pair.prefix;
+            int[] suffix = pair.suffix;
+
+            if (suffix.length == 0) {
+                result.add(prefix);
+            } else {
+                for (int i = 0; i < suffix.length; i++) {
+                    List<Integer> newPrefix = new ArrayList<>(prefix);
+                    newPrefix.add(suffix[i]);
+
+                    int[] newSuffix = new int[suffix.length - 1];
+                    System.arraycopy(suffix, 0, newSuffix, 0, i);
+                    System.arraycopy(suffix, i + 1, newSuffix, i, suffix.length - i - 1);
+
+                    stack.push(new Pair(newPrefix, newSuffix));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static class Pair {
+        List<Integer> prefix;
+        int[] suffix;
+
+        Pair(List<Integer> prefix, int[] suffix) {
+            this.prefix = prefix;
+            this.suffix = suffix;
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        List<List<Integer>> permutations = generatePermutations(nums);
+        System.out.println(permutations);
+    }
+}
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// BONUS: Combinations with JAVASCRIPT: //
+
+function combinations(arr, k) {
+    let result = [];
+
+    function combine(current, start) {
+        if (current.length === k) {
+            result.push(current.slice());
+            return;
+        }
+
+        for (let i = start; i < arr.length; i++) {
+            current.push(arr[i]);
+            combine(current, i + 1);
+            current.pop();
+        }
+    }
+
+    combine([], 0);
+    return result;
+}
+
+// Example usage
+let input = ['A', 'B', 'C', 'D'];
+let k = 2;
+let result = combinations(input, k);
+console.log(result);
