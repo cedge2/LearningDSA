@@ -1,0 +1,161 @@
+// Linear Regression //
+
+Linear regression is a statistical method used to model the relationship between a dependent variable (often denoted as and one or more independent variables (denoted as x). It assumes a linear 
+relationship between the variables, aiming to find the best-fitting line (or hyperplane in higher dimensions) that minimizes the differences between the observed values and the values predicted 
+by the model. This technique is widely used for prediction and forecasting in various fields, such as economics, social sciences, and natural sciences, where understanding and quantifying 
+relationships between variables is crucial.
+
+// JAVASCRIPT example: //
+
+// Example data: heights (in inches) and weights (in pounds)
+const heights = [63, 64, 66, 69, 69, 71, 71, 72, 73];
+const weights = [127, 121, 142, 157, 162, 156, 169, 165, 181];
+
+// Function to calculate mean
+function mean(values) {
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    return sum / values.length;
+}
+
+// Function to calculate covariance
+function covariance(x, meanX, y, meanY) {
+    let covar = 0;
+    for (let i = 0; i < x.length; i++) {
+        covar += (x[i] - meanX) * (y[i] - meanY);
+    }
+    return covar;
+}
+
+// Function to calculate variance
+function variance(values, mean) {
+    return values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0);
+}
+
+// Calculate mean of both variables
+const meanHeight = mean(heights);
+const meanWeight = mean(weights);
+
+// Calculate covariance and variance
+const covarianceHW = covariance(heights, meanHeight, weights, meanWeight);
+const varianceH = variance(heights, meanHeight);
+
+// Calculate slope (m)
+const slope = covarianceHW / varianceH;
+
+// Calculate intercept (c)
+const intercept = meanWeight - slope * meanHeight;
+
+// Predicting weight for a new height
+const newHeight = 68;
+const predictedWeight = slope * newHeight + intercept;
+
+console.log(`For a height of ${newHeight} inches, the predicted weight is ${predictedWeight.toFixed(2)} pounds.`);
+
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+# Example data: heights (in inches) and weights (in pounds)
+heights = [63, 64, 66, 69, 69, 71, 71, 72, 73]
+weights = [127, 121, 142, 157, 162, 156, 169, 165, 181]
+
+# Function to compute mean
+def mean(values):
+    return sum(values) / len(values)
+
+# Function to compute covariance
+def covariance(x, mean_x, y, mean_y):
+    covar = 0.0
+    for i in range(len(x)):
+        covar += (x[i] - mean_x) * (y[i] - mean_y)
+    return covar
+
+# Function to compute variance
+def variance(values, mean):
+    return sum([(x - mean) ** 2 for x in values])
+
+# Calculate mean of both variables
+mean_height = mean(heights)
+mean_weight = mean(weights)
+
+# Calculate covariance and variance
+covariance_hw = covariance(heights, mean_height, weights, mean_weight)
+variance_h = variance(heights, mean_height)
+
+# Calculate slope (m)
+slope = covariance_hw / variance_h
+
+# Calculate intercept (c)
+intercept = mean_weight - slope * mean_height
+
+# Predicting weight for a new height
+new_height = 68
+predicted_weight = slope * new_height + intercept
+
+print(f"For a height of {new_height} inches, the predicted weight is {predicted_weight:.2f} pounds.")
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.Arrays;
+
+public class LinearRegressionExample {
+
+    // Function to calculate mean
+    public static double mean(double[] values) {
+        double sum = 0;
+        for (double value : values) {
+            sum += value;
+        }
+        return sum / values.length;
+    }
+
+    // Function to calculate covariance
+    public static double covariance(double[] x, double meanX, double[] y, double meanY) {
+        double covar = 0;
+        for (int i = 0; i < x.length; i++) {
+            covar += (x[i] - meanX) * (y[i] - meanY);
+        }
+        return covar;
+    }
+
+    // Function to calculate variance
+    public static double variance(double[] values, double mean) {
+        double sum = 0;
+        for (double value : values) {
+            sum += Math.pow(value - mean, 2);
+        }
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        // Example data: heights (in inches) and weights (in pounds)
+        double[] heights = {63, 64, 66, 69, 69, 71, 71, 72, 73};
+        double[] weights = {127, 121, 142, 157, 162, 156, 169, 165, 181};
+
+        // Calculate mean of both variables
+        double meanHeight = mean(heights);
+        double meanWeight = mean(weights);
+
+        // Calculate covariance and variance
+        double covarianceHW = covariance(heights, meanHeight, weights, meanWeight);
+        double varianceH = variance(heights, meanHeight);
+
+        // Calculate slope (m)
+        double slope = covarianceHW / varianceH;
+
+        // Calculate intercept (c)
+        double intercept = meanWeight - slope * meanHeight;
+
+        // Predicting weight for a new height
+        double newHeight = 68;
+        double predictedWeight = slope * newHeight + intercept;
+
+        System.out.printf("For a height of %.2f inches, the predicted weight is %.2f pounds.%n", newHeight, predictedWeight);
+    }
+}
