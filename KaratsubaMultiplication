@@ -1,0 +1,113 @@
+// Karatsuba Multiplication //
+
+Karatsuba multiplication is an algorithm for fast multiplication of large numbers using a divide-and-conquer approach. It reduces the multiplication of two n-digit numbers to a combination of 
+three multiplications of roughly n/2-digit numbers, along with some additions and shifts. By recursively applying this method, Karatsuba multiplication achieves a significant reduction in 
+computational complexity compared to traditional multiplication algorithms, making it particularly efficient for large integers.
+
+
+// JAVASCRIPT example: //
+
+function karatsuba(x, y) {
+    // Base case for single-digit multiplication
+    if (x < 10 || y < 10) {
+        return x * y;
+    }
+
+    // Calculate the number of digits in each number
+    let n = Math.max(x.toString().length, y.toString().length);
+    let n2 = Math.floor(n / 2);
+
+    // Split the numbers into halves
+    let a = Math.floor(x / 10 ** n2);
+    let b = x % (10 ** n2);
+    let c = Math.floor(y / 10 ** n2);
+    let d = y % (10 ** n2);
+
+    // Recursive steps
+    let ac = karatsuba(a, c);
+    let bd = karatsuba(b, d);
+    let ad_plus_bc = karatsuba(a + b, c + d) - ac - bd;
+
+    // Combine the results
+    return ac * 10 ** (2 * n2) + ad_plus_bc * 10 ** n2 + bd;
+}
+
+// Example usage
+let result = karatsuba(1234, 5678);
+console.log(result);  // Output: 7006652
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def karatsuba(x, y):
+    # Base case for single-digit multiplication
+    if x < 10 or y < 10:
+        return x * y
+    
+    # Calculate the number of digits in each number
+    n = max(len(str(x)), len(str(y)))
+    n2 = n // 2
+
+    # Split the numbers into halves
+    a = x // 10**n2
+    b = x % 10**n2
+    c = y // 10**n2
+    d = y % 10**n2
+
+    # Recursive steps
+    ac = karatsuba(a, c)
+    bd = karatsuba(b, d)
+    ad_plus_bc = karatsuba(a + b, c + d) - ac - bd
+
+    # Combine the results
+    result = ac * 10**(2*n2) + ad_plus_bc * 10**n2 + bd
+    return result
+
+# Example usage
+result = karatsuba(1234, 5678)
+print(result)  # Output: 7006652
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.math.BigInteger;
+
+public class KaratsubaMultiplication {
+
+    public static BigInteger karatsuba(BigInteger x, BigInteger y) {
+        // Base case for single-digit multiplication
+        if (x.compareTo(BigInteger.TEN) == -1 || y.compareTo(BigInteger.TEN) == -1) {
+            return x.multiply(y);
+        }
+
+        // Calculate the number of digits in each number
+        int n = Math.max(x.toString().length(), y.toString().length());
+        int n2 = n / 2;
+
+        // Split the numbers into halves
+        BigInteger a = x.divide(BigInteger.TEN.pow(n2));
+        BigInteger b = x.mod(BigInteger.TEN.pow(n2));
+        BigInteger c = y.divide(BigInteger.TEN.pow(n2));
+        BigInteger d = y.mod(BigInteger.TEN.pow(n2));
+
+        // Recursive steps
+        BigInteger ac = karatsuba(a, c);
+        BigInteger bd = karatsuba(b, d);
+        BigInteger ad_plus_bc = karatsuba(a.add(b), c.add(d)).subtract(ac).subtract(bd);
+
+        // Combine the results
+        return ac.multiply(BigInteger.TEN.pow(2 * n2)).add(ad_plus_bc.multiply(BigInteger.TEN.pow(n2))).add(bd);
+    }
+
+    public static void main(String[] args) {
+        BigInteger x = new BigInteger("1234");
+        BigInteger y = new BigInteger("5678");
+        BigInteger result = karatsuba(x, y);
+        System.out.println(result);  // Output: 7006652
+    }
+}
