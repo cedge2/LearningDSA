@@ -1,0 +1,175 @@
+// Shunting Yard //
+
+The Shunting Yard Algorithm, devised by Edsger Dijkstra, is used to convert infix expressions (where operators are placed between operands) into postfix notation (operators follow their operands). 
+This algorithm employs a stack to reorder operators based on their precedence and associativity rules, ensuring the correct order of operations without the need for parentheses. By processing 
+each token (operand or operator) sequentially, the Shunting Yard Algorithm efficiently transforms infix expressions into postfix form, which is easier to evaluate programmatically in languages 
+like JavaScript or Python.
+
+
+// JAVASCRIPT example: //
+
+function precedence(operator) {
+    switch (operator) {
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+        case '^':
+            return 3;
+        default:
+            return 0;
+    }
+}
+
+function infixToPostfix(expression) {
+    let output = [];
+    let stack = [];
+
+    const tokens = expression.split(/\s+/);
+
+    tokens.forEach(token => {
+        if (!isNaN(token)) {
+            output.push(token);  // token is a number, push it to output
+        } else if (token === '(') {
+            stack.push(token);  // token is '(', push it to stack
+        } else if (token === ')') {
+            while (stack.length > 0 && stack[stack.length - 1] !== '(') {
+                output.push(stack.pop());  // pop from stack to output until '('
+            }
+            stack.pop();  // pop '(' from stack
+        } else {
+            while (stack.length > 0 && precedence(stack[stack.length - 1]) >= precedence(token)) {
+                output.push(stack.pop());  // pop from stack to output while precedence of top of stack >= token
+            }
+            stack.push(token);  // push token to stack
+        }
+    });
+
+    // pop all the operators from stack to output
+    while (stack.length > 0) {
+        output.push(stack.pop());
+    }
+
+    return output.join(' ');
+}
+
+// Example usage:
+const infixExpression = '3 + 4 * 2 / ( 1 - 5 ) ^ 2';
+const postfixExpression = infixToPostfix(infixExpression);
+console.log(postfixExpression);  // Output: "3 4 2 * 1 5 - 2 ^ / +"
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def precedence(operator):
+    if operator in {'+', '-'}:
+        return 1
+    elif operator in {'*', '/'}:
+        return 2
+    elif operator == '^':
+        return 3
+    else:
+        return 0
+
+def infix_to_postfix(expression):
+    output = []
+    stack = []
+
+    tokens = expression.split()
+
+    for token in tokens:
+        if token.isdigit():
+            output.append(token)  # token is a number, append it to output
+        elif token == '(':
+            stack.append(token)  # token is '(', push it to stack
+        elif token == ')':
+            while stack and stack[-1] != '(':
+                output.append(stack.pop())  # pop from stack to output until '('
+            stack.pop()  # pop '(' from stack
+        else:
+            while stack and precedence(stack[-1]) >= precedence(token):
+                output.append(stack.pop())  # pop from stack to output while precedence of top of stack >= token
+            stack.append(token)  # push token to stack
+
+    # pop all the operators from stack to output
+    while stack:
+        output.append(stack.pop())
+
+    return ' '.join(output)
+
+# Example usage:
+infix_expression = '3 + 4 * 2 / ( 1 - 5 ) ^ 2'
+postfix_expression = infix_to_postfix(infix_expression)
+print(postfix_expression)  # Output: "3 4 2 * 1 5 - 2 ^ / +"
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+
+import java.util.*;
+
+public class ShuntingYard {
+
+    // Function to determine precedence of operators
+    private static int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            case '^':
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
+    // Function to convert infix expression to postfix expression
+    private static String infixToPostfix(String expression) {
+        StringBuilder output = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+
+        String[] tokens = expression.split("\\s+");
+
+        for (String token : tokens) {
+            char ch = token.charAt(0);
+            if (Character.isDigit(ch)) {
+                output.append(token).append(" ");  // token is a number, append it to output
+            } else if (ch == '(') {
+                stack.push(ch);  // token is '(', push it to stack
+            } else if (ch == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    output.append(stack.pop()).append(" ");  // pop from stack to output until '('
+                }
+                stack.pop();  // pop '(' from stack
+            } else {
+                while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(ch)) {
+                    output.append(stack.pop()).append(" ");  // pop from stack to output while precedence of top of stack >= ch
+                }
+                stack.push(ch);  // push ch to stack
+            }
+        }
+
+        // pop all the operators from stack to output
+        while (!stack.isEmpty()) {
+            output.append(stack.pop()).append(" ");
+        }
+
+        return output.toString().trim();
+    }
+
+    public static void main(String[] args) {
+        String infixExpression = "3 + 4 * 2 / ( 1 - 5 ) ^ 2";
+        String postfixExpression = infixToPostfix(infixExpression);
+        System.out.println(postfixExpression);  // Output: "3 4 2 * 1 5 - 2 ^ / +"
+    }
+}
