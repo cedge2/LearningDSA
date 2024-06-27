@@ -1,0 +1,238 @@
+// K Means Clustering //
+
+K-means clustering is a popular unsupervised machine learning algorithm used for partitioning a dataset into K distinct, non-overlapping clusters. It works by iteratively assigning data points to 
+the nearest cluster centroid and then recalculating the centroids based on the mean of the points assigned to each cluster. This process continues until the centroids stabilize or a specified 
+number of iterations is reached. The goal is to minimize the variance within clusters and maximize the variance between clusters, effectively grouping similar data points together while 
+maintaining distinct clusters.
+
+// JAVASCRIPT examples: //
+
+// Example data points (2-dimensional)
+const points = [
+  [1, 2],
+  [1.5, 1.8],
+  [5, 8],
+  [8, 8],
+  [1, 0.6],
+  [9, 11]
+];
+
+// Function to calculate Euclidean distance between two points
+function euclideanDistance(point1, point2) {
+  return Math.sqrt(
+    Math.pow(point2[0] - point1[0], 2) + 
+    Math.pow(point2[1] - point1[1], 2)
+  );
+}
+
+// K-means clustering function
+function kMeans(points, k, maxIterations = 100) {
+  // Initialize centroids randomly
+  let centroids = points.slice(0, k);
+
+  for (let iter = 0; iter < maxIterations; iter++) {
+    // Assign points to clusters
+    let clusters = Array.from({ length: k }, () => []);
+
+    points.forEach(point => {
+      let distances = centroids.map(centroid => euclideanDistance(point, centroid));
+      let closestCluster = distances.indexOf(Math.min(...distances));
+      clusters[closestCluster].push(point);
+    });
+
+    // Update centroids
+    let newCentroids = clusters.map(cluster => {
+      if (cluster.length === 0) return centroids[clusters.indexOf(cluster)]; // Keep old centroid if cluster is empty
+      let centroid = cluster.reduce((acc, curr) => [acc[0] + curr[0], acc[1] + curr[1]]);
+      return [centroid[0] / cluster.length, centroid[1] / cluster.length];
+    });
+
+    // Check for convergence
+    if (JSON.stringify(newCentroids) === JSON.stringify(centroids)) {
+      console.log(`Converged after ${iter + 1} iterations.`);
+      break;
+    }
+
+    centroids = newCentroids;
+  }
+
+  return centroids;
+}
+
+// Example usage:
+const k = 2; // Number of clusters
+const result = kMeans(points, k);
+console.log('Final centroids:', result);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Example data points (2-dimensional)
+points = np.array([
+    [1, 2],
+    [1.5, 1.8],
+    [5, 8],
+    [8, 8],
+    [1, 0.6],
+    [9, 11]
+])
+
+# Function to calculate Euclidean distance between two points
+def euclidean_distance(point1, point2):
+    return np.sqrt(np.sum((point1 - point2) ** 2))
+
+# K-means clustering function
+def k_means(points, k, max_iterations=100):
+    # Initialize centroids randomly
+    centroids = points[np.random.choice(points.shape[0], k, replace=False)]
+    
+    for _ in range(max_iterations):
+        # Assign points to clusters
+        clusters = [[] for _ in range(k)]
+        for point in points:
+            distances = [euclidean_distance(point, centroid) for centroid in centroids]
+            closest_cluster = np.argmin(distances)
+            clusters[closest_cluster].append(point)
+        
+        # Update centroids
+        new_centroids = [np.mean(cluster, axis=0) for cluster in clusters if cluster]
+        
+        # Check for convergence
+        if np.allclose(centroids, new_centroids):
+            print(f"Converged after {_ + 1} iterations.")
+            break
+        
+        centroids = np.array(new_centroids)
+    
+    return centroids
+
+# Example usage:
+k = 2  # Number of clusters
+centroids = k_means(points, k)
+
+# Plotting the clusters and centroids
+plt.scatter(points[:, 0], points[:, 1], color='blue', label='Points')
+plt.scatter(centroids[:, 0], centroids[:, 1], color='red', marker='*', s=200, label='Centroids')
+plt.title('K-means Clustering')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print('Final centroids:')
+print(centroids)
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class KMeansClustering {
+
+    // Example data points (2-dimensional)
+    private static final double[][] points = {
+            {1, 2},
+            {1.5, 1.8},
+            {5, 8},
+            {8, 8},
+            {1, 0.6},
+            {9, 11}
+    };
+
+    // Function to calculate Euclidean distance between two points
+    private static double euclideanDistance(double[] point1, double[] point2) {
+        double sum = 0.0;
+        for (int i = 0; i < point1.length; i++) {
+            sum += Math.pow(point2[i] - point1[i], 2);
+        }
+        return Math.sqrt(sum);
+    }
+
+    // K-means clustering function
+    private static List<double[]> kMeans(double[][] points, int k, int maxIterations) {
+        Random random = new Random();
+        List<double[]> centroids = new ArrayList<>();
+
+        // Initialize centroids randomly
+        for (int i = 0; i < k; i++) {
+            centroids.add(points[random.nextInt(points.length)]);
+        }
+
+        for (int iter = 0; iter < maxIterations; iter++) {
+            List<List<double[]>> clusters = new ArrayList<>();
+            for (int i = 0; i < k; i++) {
+                clusters.add(new ArrayList<>());
+            }
+
+            // Assign points to clusters
+            for (double[] point : points) {
+                double minDistance = Double.MAX_VALUE;
+                int closestCluster = -1;
+                for (int i = 0; i < k; i++) {
+                    double distance = euclideanDistance(point, centroids.get(i));
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestCluster = i;
+                    }
+                }
+                clusters.get(closestCluster).add(point);
+            }
+
+            // Update centroids
+            List<double[]> newCentroids = new ArrayList<>();
+            for (List<double[]> cluster : clusters) {
+                if (!cluster.isEmpty()) {
+                    double[] centroid = new double[points[0].length];
+                    for (double[] point : cluster) {
+                        for (int j = 0; j < centroid.length; j++) {
+                            centroid[j] += point[j];
+                        }
+                    }
+                    for (int j = 0; j < centroid.length; j++) {
+                        centroid[j] /= cluster.size();
+                    }
+                    newCentroids.add(centroid);
+                } else {
+                    newCentroids.add(centroids.get(clusters.indexOf(cluster))); // Keep old centroid if cluster is empty
+                }
+            }
+
+            // Check for convergence
+            if (centroids.equals(newCentroids)) {
+                System.out.println("Converged after " + (iter + 1) + " iterations.");
+                break;
+            }
+
+            centroids = newCentroids;
+        }
+
+        return centroids;
+    }
+
+    // Main method for example usage
+    public static void main(String[] args) {
+        int k = 2; // Number of clusters
+        int maxIterations = 100;
+        List<double[]> result = kMeans(points, k, maxIterations);
+
+        // Print final centroids
+        System.out.println("Final centroids:");
+        for (double[] centroid : result) {
+            for (double coord : centroid) {
+                System.out.print(coord + " ");
+            }
+            System.out.println();
+        }
+    }
+}
