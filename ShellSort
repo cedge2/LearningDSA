@@ -1,0 +1,121 @@
+// Shell Sort //
+
+Shell sort is an in-place comparison-based sorting algorithm that generalizes insertion sort to allow the exchange of items that are far apart. The idea is to arrange the list of elements so that, 
+starting anywhere, taking every hth element produces a sorted list. Such a list is said to be h-sorted. The algorithm uses a sequence of gaps (decreasing intervals) to sort elements over these 
+intervals. As the gap reduces and eventually becomes 1, the algorithm performs a final insertion sort to ensure the list is fully sorted. This approach improves efficiency by reducing the number 
+of movements required compared to a standard insertion sort, especially for large lists.
+
+
+// JAVASCRIPT example: //
+
+function shellSort(arr) {
+    let n = arr.length;
+
+    // Start with a big gap, then reduce the gap
+    for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+        // Perform a gapped insertion sort for this gap size
+        for (let i = gap; i < n; i++) {
+            // Save the current element and make a hole at position i
+            let temp = arr[i];
+
+            // Shift earlier gap-sorted elements up until the correct location for arr[i] is found
+            let j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+
+            // Put temp (the original arr[i]) in its correct location
+            arr[j] = temp;
+        }
+    }
+
+    return arr;
+}
+
+// Example usage
+let array = [12, 34, 54, 2, 3];
+console.log("Original array:", array);
+let sortedArray = shellSort(array);
+console.log("Sorted array:", sortedArray);
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+
+    # Start with a big gap, then reduce the gap
+    while gap > 0:
+        # Perform a gapped insertion sort for this gap size
+        for i in range(gap, n):
+            # Save the current element and make a hole at position i
+            temp = arr[i]
+
+            # Shift earlier gap-sorted elements up until the correct location for arr[i] is found
+            j = i
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+
+            # Put temp (the original arr[i]) in its correct location
+            arr[j] = temp
+
+        # Reduce the gap for the next element
+        gap //= 2
+
+    return arr
+
+# Example usage
+array = [12, 34, 54, 2, 3]
+print("Original array:", array)
+sorted_array = shell_sort(array)
+print("Sorted array:", sorted_array)
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+public class ShellSort {
+
+    public static void shellSort(int[] arr) {
+        int n = arr.length;
+
+        // Start with a big gap, then reduce the gap
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            // Perform a gapped insertion sort for this gap size
+            for (int i = gap; i < n; i++) {
+                // Save the current element and make a hole at position i
+                int temp = arr[i];
+
+                // Shift earlier gap-sorted elements up until the correct location for arr[i] is found
+                int j;
+                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                    arr[j] = arr[j - gap];
+                }
+
+                // Put temp (the original arr[i]) in its correct location
+                arr[j] = temp;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] array = {12, 34, 54, 2, 3};
+        System.out.println("Original array:");
+        for (int num : array) {
+            System.out.print(num + " ");
+        }
+
+        shellSort(array);
+
+        System.out.println("\nSorted array:");
+        for (int num : array) {
+            System.out.print(num + " ");
+        }
+    }
+}
