@@ -1,0 +1,109 @@
+// Quick Sort //
+
+Quicksort is a highly efficient sorting algorithm that uses a divide-and-conquer strategy to sort elements. The process involves selecting a 'pivot' element from the array and partitioning the 
+other elements into two sub-arrays: those less than the pivot and those greater than the pivot. This partitioning is done such that the pivot is in its final sorted position. The algorithm then 
+recursively applies the same procedure to the sub-arrays. The efficiency of quicksort comes from its ability to significantly reduce the problem size with each step, often leading to an 
+average-case time complexity of O(n log n). However, its worst-case time complexity can degrade to O(n²) if poor pivot choices are consistently made, although this can be mitigated by using 
+strategies like random pivot selection or the median-of-three rule.
+
+
+// JAVASCRIPT example: //
+
+function quicksort(arr) {
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    // Choose a pivot element (this implementation uses the last element as the pivot)
+    let pivot = arr[arr.length - 1];
+    let left = [];
+    let right = [];
+
+    // Partition the array into two sub-arrays
+    for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] < pivot) {
+            left.push(arr[i]);
+        } else {
+            right.push(arr[i]);
+        }
+    }
+
+    // Recursively apply quicksort to the sub-arrays and concatenate the results
+    return [...quicksort(left), pivot, ...quicksort(right)];
+}
+
+// Example usage:
+let array = [34, 7, 23, 32, 5, 62];
+let sortedArray = quicksort(array);
+console.log(sortedArray);  // Output: [5, 7, 23, 32, 34, 62]
+
+
+***************************************************************************************************************************************************************************************************
+
+// PYTHON example: //
+
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    
+    pivot = arr[len(arr) - 1]
+    left = []
+    right = []
+    
+    for i in range(len(arr) - 1):
+        if arr[i] < pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    
+    return quicksort(left) + [pivot] + quicksort(right)
+
+# Example usage:
+array = [34, 7, 23, 32, 5, 62]
+sorted_array = quicksort(array)
+print(sorted_array)  # Output: [5, 7, 23, 32, 34, 62]
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.Arrays;
+
+public class QuickSort {
+    public static void main(String[] args) {
+        int[] array = {34, 7, 23, 32, 5, 62};
+        quicksort(array, 0, array.length - 1);
+        System.out.println(Arrays.toString(array));  // Output: [5, 7, 23, 32, 34, 62]
+    }
+
+    public static void quicksort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pivotIndex = partition(arr, low, high);
+            quicksort(arr, low, pivotIndex - 1);
+            quicksort(arr, pivotIndex + 1, high);
+        }
+    }
+
+    public static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+
+        swap(arr, i + 1, high);
+        return i + 1;
+    }
+
+    public static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
