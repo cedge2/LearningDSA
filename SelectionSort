@@ -1,0 +1,104 @@
+// Selection Sort //
+
+Selection sort is a simple comparison-based sorting algorithm. It works by repeatedly finding the minimum (or maximum, depending on the sorting order) element from the unsorted part of the array 
+and moving it to the beginning (or end) of the sorted part. 
+
+
+// JAVASCRIPT example: //
+
+function selectionSort(arr) {
+  let n = arr.length;
+  
+  // Traverse through all array elements
+  for (let i = 0; i < n - 1; i++) {
+    // Find the minimum element in the remaining unsorted array
+    let minIndex = i;
+    for (let j = i + 1; j < n; j++) {
+      if (arr[j] < arr[minIndex]) {
+        minIndex = j;
+      }
+    }
+    
+    // Swap the found minimum element with the first element
+    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+  }
+  
+  return arr;
+}
+
+// Example usage
+let array = [64, 25, 12, 22, 11];
+console.log("Unsorted array:", array);
+array = selectionSort(array);
+console.log("Sorted array:", array);
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// PYTHON example: //
+
+def selection_sort(arr):
+    n = len(arr)
+    
+    # Traverse through all array elements
+    for i in range(n - 1):
+        # Find the minimum element in the remaining unsorted array
+        min_index = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+        
+        # Swap the found minimum element with the first element
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+    
+    return arr
+
+# Example usage
+array = [64, 25, 12, 22, 11]
+print("Unsorted array:", array)
+sorted_array = selection_sort(array)
+print("Sorted array:", sorted_array)
+
+
+***************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+public class SelectionSort {
+    public static void selectionSort(int[] arr) {
+        int n = arr.length;
+        
+        // Traverse through all array elements
+        for (int i = 0; i < n - 1; i++) {
+            // Find the minimum element in the remaining unsorted array
+            int minIndex = i;
+            for (int j = i + 1; j < n; j++) {
+                if (arr[j] < arr[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            
+            // Swap the found minimum element with the first element
+            int temp = arr[minIndex];
+            arr[minIndex] = arr[i];
+            arr[i] = temp;
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] array = {64, 25, 12, 22, 11};
+        System.out.println("Unsorted array:");
+        for (int num : array) {
+            System.out.print(num + " ");
+        }
+        
+        selectionSort(array);
+        
+        System.out.println("\nSorted array:");
+        for (int num : array) {
+            System.out.print(num + " ");
+        }
+    }
+}
