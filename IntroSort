@@ -1,0 +1,329 @@
+// Intro Sort //
+
+Introsort is a hybrid sorting algorithm that combines quicksort, heapsort, and insertion sort to achieve efficient sorting in different scenarios. It begins with quicksort but switches to 
+heapsort when the recursion depth exceeds a certain limit, preventing worst-case time complexity scenarios common in quicksort. If the data set becomes small enough, introsort switches to 
+insertion sort due to its efficiency on small arrays. This adaptive approach balances the average-case efficiency of quicksort with the worst-case reliability of heapsort, making introsort a 
+versatile and effective sorting method widely used in practice.
+
+
+// JAVASCRIPT example: //
+
+// Helper function: Partition function for quicksort
+function partition(arr, low, high) {
+    let pivot = arr[high];
+    let i = low - 1;
+    
+    for (let j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    return i + 1;
+}
+
+// Helper function: Insertion sort for small arrays
+function insertionSort(arr, low, high) {
+    for (let i = low + 1; i <= high; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        
+        while (j >= low && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        
+        arr[j + 1] = key;
+    }
+}
+
+// Main introsort function
+function introsort(arr) {
+    const n = arr.length;
+    const maxDepth = Math.floor(2 * Math.log(n) / Math.log(2));
+    
+    // Helper function for introsort
+    function introsortHelper(arr, low, high, depthLimit) {
+        if (high - low > 16) {
+            if (depthLimit === 0) {
+                // Switch to heapsort if depth limit is reached
+                arr = heapSort(arr.slice(low, high + 1));
+            } else {
+                let pivot = partition(arr, low, high);
+                introsortHelper(arr, low, pivot - 1, depthLimit - 1);
+                introsortHelper(arr, pivot + 1, high, depthLimit - 1);
+            }
+        } else {
+            // Use insertion sort for small arrays
+            insertionSort(arr, low, high);
+        }
+    }
+    
+    // Heapsort function
+    function heapSort(arr) {
+        const n = arr.length;
+        
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            heapify(arr, n, i);
+        }
+        
+        for (let i = n - 1; i > 0; i--) {
+            [arr[0], arr[i]] = [arr[i], arr[0]];
+            heapify(arr, i, 0);
+        }
+        
+        return arr;
+    }
+    
+    // Heapify function for heapsort
+    function heapify(arr, n, i) {
+        let largest = i;
+        let left = 2 * i + 1;
+        let right = 2 * i + 2;
+        
+        if (left < n && arr[left] > arr[largest]) {
+            largest = left;
+        }
+        
+        if (right < n && arr[right] > arr[largest]) {
+            largest = right;
+        }
+        
+        if (largest !== i) {
+            [arr[i], arr[largest]] = [arr[largest], arr[i]];
+            heapify(arr, n, largest);
+        }
+    }
+    
+    // Call introsort helper with initial values
+    introsortHelper(arr, 0, n - 1, maxDepth);
+    
+    return arr;
+}
+
+// Example usage:
+let array = [8, 3, 1, 5, 9, 2, 7, 4, 6];
+console.log("Before sorting:", array);
+introsort(array);
+console.log("After sorting:", array);
+
+
+
+**************************************************************************************************************************************************************************************************
+
+
+// PYTHON example: //
+
+import math
+
+# Helper function: Partition function for quicksort
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    
+    for j in range(low, high):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+# Helper function: Insertion sort for small arrays
+def insertion_sort(arr, low, high):
+    for i in range(low + 1, high + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= low and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+# Main introsort function
+def introsort(arr):
+    n = len(arr)
+    max_depth = math.floor(2 * math.log(n, 2))
+    
+    # Helper function for introsort
+    def introsort_helper(arr, low, high, depth_limit):
+        if high - low > 16:
+            if depth_limit == 0:
+                # Switch to heapsort if depth limit is reached
+                arr[low:high + 1] = heapsort(arr[low:high + 1])
+            else:
+                pivot = partition(arr, low, high)
+                introsort_helper(arr, low, pivot - 1, depth_limit - 1)
+                introsort_helper(arr, pivot + 1, high, depth_limit - 1)
+        else:
+            # Use insertion sort for small arrays
+            insertion_sort(arr, low, high)
+    
+    # Heapsort function
+    def heapsort(arr):
+        def heapify(arr, n, i):
+            largest = i
+            left = 2 * i + 1
+            right = 2 * i + 2
+            
+            if left < n and arr[left] > arr[largest]:
+                largest = left
+            
+            if right < n and arr[right] > arr[largest]:
+                largest = right
+            
+            if largest != i:
+                arr[i], arr[largest] = arr[largest], arr[i]
+                heapify(arr, n, largest)
+        
+        n = len(arr)
+        
+        for i in range(n // 2 - 1, -1, -1):
+            heapify(arr, n, i)
+        
+        for i in range(n - 1, 0, -1):
+            arr[0], arr[i] = arr[i], arr[0]
+            heapify(arr, i, 0)
+        
+        return arr
+    
+    # Call introsort helper with initial values
+    introsort_helper(arr, 0, n - 1, max_depth)
+    
+    return arr
+
+# Example usage:
+array = [8, 3, 1, 5, 9, 2, 7, 4, 6]
+print("Before sorting:", array)
+introsort(array)
+print("After sorting:", array)
+
+
+
+**************************************************************************************************************************************************************************************************
+
+
+// JAVA example: //
+
+import java.util.Arrays;
+
+public class IntroSort {
+    
+    // Helper function: Partition function for quicksort
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1;
+        
+        for (int j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        
+        return i + 1;
+    }
+    
+    // Helper function: Insertion sort for small arrays
+    private static void insertionSort(int[] arr, int low, int high) {
+        for (int i = low + 1; i <= high; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            
+            while (j >= low && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            
+            arr[j + 1] = key;
+        }
+    }
+    
+    // Main introsort function
+    public static void introsort(int[] arr) {
+        int n = arr.length;
+        int maxDepth = (int) (2 * Math.log(n) / Math.log(2));
+        
+        // Helper function for introsort
+        introsortHelper(arr, 0, n - 1, maxDepth);
+    }
+    
+    // Helper function for introsort
+    private static void introsortHelper(int[] arr, int low, int high, int depthLimit) {
+        if (high - low > 16) {
+            if (depthLimit == 0) {
+                // Switch to heapsort if depth limit is reached
+                heapsort(arr, low, high);
+            } else {
+                int pivot = partition(arr, low, high);
+                introsortHelper(arr, low, pivot - 1, depthLimit - 1);
+                introsortHelper(arr, pivot + 1, high, depthLimit - 1);
+            }
+        } else {
+            // Use insertion sort for small arrays
+            insertionSort(arr, low, high);
+        }
+    }
+    
+    // Heapsort function
+    private static void heapsort(int[] arr, int low, int high) {
+        int n = high - low + 1;
+        
+        // Build heap (rearrange array)
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(arr, n, i, low);
+        }
+        
+        // One by one extract an element from heap
+        for (int i = n - 1; i > 0; i--) {
+            // Move current root to end
+            int temp = arr[low];
+            arr[low] = arr[low + i];
+            arr[low + i] = temp;
+            
+            // call max heapify on the reduced heap
+            heapify(arr, i, 0, low);
+        }
+    }
+    
+    // To heapify a subtree rooted with node i which is an index in arr[]
+    private static void heapify(int[] arr, int n, int i, int low) {
+        int largest = i;  // Initialize largest as root
+        int left = 2 * i + 1;  // left = 2*i + 1
+        int right = 2 * i + 2;  // right = 2*i + 2
+        
+        // If left child is larger than root
+        if (left < n && arr[low + left] > arr[low + largest])
+            largest = left;
+        
+        // If right child is larger than largest so far
+        if (right < n && arr[low + right] > arr[low + largest])
+            largest = right;
+        
+        // If largest is not root
+        if (largest != i) {
+            int swap = arr[low + i];
+            arr[low + i] = arr[low + largest];
+            arr[low + largest] = swap;
+            
+            // Recursively heapify the affected sub-tree
+            heapify(arr, n, largest, low);
+        }
+    }
+    
+    // Example usage
+    public static void main(String[] args) {
+        int[] array = {8, 3, 1, 5, 9, 2, 7, 4, 6};
+        
+        System.out.println("Before sorting: " + Arrays.toString(array));
+        introsort(array);
+        System.out.println("After sorting: " + Arrays.toString(array));
+    }
+}
